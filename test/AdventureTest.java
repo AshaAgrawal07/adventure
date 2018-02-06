@@ -4,7 +4,7 @@ import org.junit.Rule;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 
-import java.lang.reflect.Array;
+
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
@@ -13,16 +13,10 @@ public class AdventureTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-
-    private Adventure roomInAdventure;
-   // private Adventure[] roomsInAdventure;
-
     @Before
     public void setUp() throws Exception {
         Gson gson = new Gson();
         LinkParse.parse("https://courses.engr.illinois.edu/cs126/adventure/siebel.json");
-        //roomInAdventure = gson.fromJson(ROOM_JSON, Adventure.class);
-       // roomsInAdventure = gson.fromJson(ROOMS_JSON_ARRAY, Adventure[].class);
     }
 
 
@@ -39,8 +33,9 @@ public class AdventureTest {
 
     @Test
     public void getItemsTest() {
-        String[] itemInRoom = {"coin"};
-        assertArrayEquals(itemInRoom, LinkParse.adventure.getRooms()[0].getItems());
+        ArrayList<String> itemInRoom = new ArrayList<>();
+        itemInRoom.add("coin");
+        assertEquals(itemInRoom, LinkParse.adventure.getRooms()[0].getItems());
     }
 
     @Test

@@ -23,18 +23,4 @@ public class Adventure {
         return rooms;
     }
 
-
-
-    public static ArrayList<Adventure> convertToList() {
-        List<String> files = Data.getJsonFilesAsList();
-        ArrayList<Adventure> filesIntoObjects = new ArrayList<>();
-
-        for (String filename : files) {
-            Gson gson = new Gson();
-            String str = Data.getFileContentsAsString(filename);
-            filesIntoObjects.addAll(Arrays.asList(gson.fromJson(str, Adventure[].class)));
-        }
-        return filesIntoObjects;
-    }
-
 }
