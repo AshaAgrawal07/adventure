@@ -60,39 +60,13 @@ public class AdventureTest {
     }
 
     @Test
-    public void getNameArrayTest() {
-        assertEquals("MatthewsStreet", roomsInAdventure[0].getName());
-    }
-
-    @Test
-    public void getDescriptionArrayTest() {
-        assertEquals("You are on Matthews, outside the Siebel Center", roomsInAdventure[0].getDescription());
-    }
-
-    @Test
-    public void getItemsArrayTest() {
-        String[] itemInRoom = {"coin"};
-        assertArrayEquals(itemInRoom, roomsInAdventure[0].getItems());
-    }
-
-    @Test
-    public void getDirectionNameArrayTest() {
-        assertEquals("East", roomsInAdventure[0].getDirectionName());
-    }
-
-    @Test
-    public void getRoomArrayTest() {
-        assertEquals("SiebelEntry", roomsInAdventure[0].getRoom());
-    }
-
-    @Test
-    public void getDirectionsArrayTest() {
-        String[] directionsExpected = {"East", "SiebelEntry"};
-        assertArrayEquals(directionsExpected, roomsInAdventure[0].getDirections());
-    }
-
-    @Test
     public void getStartingRoomTest() {
-      //  assertEquals("MatthewStreet", roomsInAdventure.getStartingRoom());
+        assertEquals("MatthewStreet", LinkParse.adventure.getStartingRoom());
     }
+
+    @Test
+    public void getEndingRoomTest() {
+        assertEquals("Siebel1314", LinkParse.adventure.getEndingRoom());
+    }
+
 }
