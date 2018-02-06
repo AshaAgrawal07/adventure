@@ -15,57 +15,84 @@ public class AdventureTest {
 
 
     private Adventure roomInAdventure;
-    private Adventure[] roomsInAdventure;
+   // private Adventure[] roomsInAdventure;
 
     @Before
     public void setUp() throws Exception {
         Gson gson = new Gson();
-        roomInAdventure = gson.fromJson(ROOM_JSON, Adventure.class);
-        //classesArray = gson.fromJson(CLASSES_JSON_ARRAY, Adventure[].class);
+        LinkParse.parse("https://courses.engr.illinois.edu/cs126/adventure/siebel.json");
+        //roomInAdventure = gson.fromJson(ROOM_JSON, Adventure.class);
+       // roomsInAdventure = gson.fromJson(ROOMS_JSON_ARRAY, Adventure[].class);
     }
 
-    private static final String ROOM_JSON = "  {\n" +
-            "      \"name\": \"MatthewsStreet\",\n" +
-            "      \"description\": \"You are on Matthews, outside the Siebel Center\",\n" +
-            "      \"items\": [\"coin\"],\n" +
-            "      \"directions\": [\n" +
-            "        {\n" +
-            "          \"directionName\": \"East\",\n" +
-            "          \"room\": \"SiebelEntry\"\n" +
-            "        }\n" +
-            "      ]\n" +
-            "    }\n";
 
     @Test
     public void getNameTest() {
-        assertEquals("MatthewsStreet", roomInAdventure.getName());
+        assertEquals("MatthewsStreet", LinkParse.adventure.getRooms()[0].getName());
     }
 
     @Test
     public void getDescriptionTest() {
-        assertEquals("You are on Matthews, outside the Siebel Center", roomInAdventure.getDescription());
+        assertEquals("You are on Matthews, outside the Siebel Center",
+                LinkParse.adventure.getRooms()[0].getDescription());
     }
 
     @Test
     public void getItemsTest() {
         String[] itemInRoom = {"coin"};
-        assertArrayEquals(itemInRoom, roomInAdventure.getItems());
+        assertArrayEquals(itemInRoom, LinkParse.adventure.getRooms()[0].getItems());
     }
 
     @Test
     public void getDirectionNameTest() {
-        assertEquals("East", roomInAdventure.getDirectionName());
+        assertEquals("East", LinkParse.adventure.getRooms()[0].getDirections()[0].getDirectionName());
     }
 
     @Test
     public void getRoomTest() {
-        assertEquals("SiebelEntry", roomInAdventure.getRoom());
+        assertEquals("SiebelEntry", LinkParse.adventure.getRooms()[0].getDirections()[1].getRoom());
     }
 
     @Test
     public void getDirectionsTest() {
         String[] directionsExpected = {"East", "SiebelEntry"};
-        assertArrayEquals(directionsExpected, roomInAdventure.getDirections());
+        assertArrayEquals(directionsExpected, LinkParse.adventure.getRooms()[0].getDirections());
     }
 
+    @Test
+    public void getNameArrayTest() {
+        assertEquals("MatthewsStreet", roomsInAdventure[0].getName());
+    }
+
+    @Test
+    public void getDescriptionArrayTest() {
+        assertEquals("You are on Matthews, outside the Siebel Center", roomsInAdventure[0].getDescription());
+    }
+
+    @Test
+    public void getItemsArrayTest() {
+        String[] itemInRoom = {"coin"};
+        assertArrayEquals(itemInRoom, roomsInAdventure[0].getItems());
+    }
+
+    @Test
+    public void getDirectionNameArrayTest() {
+        assertEquals("East", roomsInAdventure[0].getDirectionName());
+    }
+
+    @Test
+    public void getRoomArrayTest() {
+        assertEquals("SiebelEntry", roomsInAdventure[0].getRoom());
+    }
+
+    @Test
+    public void getDirectionsArrayTest() {
+        String[] directionsExpected = {"East", "SiebelEntry"};
+        assertArrayEquals(directionsExpected, roomsInAdventure[0].getDirections());
+    }
+
+    @Test
+    public void getStartingRoomTest() {
+      //  assertEquals("MatthewStreet", roomsInAdventure.getStartingRoom());
+    }
 }

@@ -7,39 +7,19 @@ import java.util.List;
 
 public class Adventure {
 
-    private String name;
-    private String description;
-    private String[] items;
-    private String directionName;
-    private String room;
-    private String[] directions;
-    private String[] rooms;
+    private Rooms[] rooms;
+    private String startingRoom;
+    private String endingRoom;
 
-    public String getName() {
-        return name;
+    public String getStartingRoom() {
+        return startingRoom;
     }
 
-    public String getDescription() {
-        return description;
+    public String getEndingRoom() {
+        return endingRoom;
     }
 
-    public String[] getItems() {
-        return items;
-    }
-
-    public String getDirectionName() {
-        return directionName;
-    }
-
-    public String getRoom() {
-        return room;
-    }
-
-    public String[] getDirections() {
-        return directions;
-    }
-
-    public String[] getRooms() {
+    public Rooms[] getRooms() {
         return rooms;
     }
 
