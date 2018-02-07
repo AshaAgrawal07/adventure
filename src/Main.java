@@ -98,21 +98,6 @@ public class Main {
 
     /**
      *
-     * @param item that we want to either add or remove from the list
-     * @param decide if positive, then add to the list, else, remove from the list
-     * @return
-     */
-    private static ArrayList<String> carryItemUpdate(String item, int decide) {
-        if (decide > 0) {
-            carryItems.add(item);
-        } else {
-            carryItems.remove(item);
-        }
-        return carryItems;
-    }
-
-    /**
-     *
      * @param input the item that the user wants to either drop or carry
      * @param currentRoom the current room of the user
      * @return a string of the updated items the user is carrying
@@ -125,19 +110,22 @@ public class Main {
             for(int i = 0; i < advent.getRooms()[index].getItems().size(); i++) {
                 if(advent.getRooms()[index].getItems().get(i).equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
                     advent.getRooms()[index].getItems().remove(i);
-                    return "You are carrying: " + carryItemUpdate(modified, 1);
+                    carryItems.add(modified);
+                    return "You are carrying: " + carryItems;
                 }
             }
-        }
-
-        if(input.contains("drop")) {
+        } else if(input.contains("drop")) {
             for(int i = 0; i < advent.getRooms()[index].getItems().size(); i++) {
                 if(advent.getRooms()[index].getItems().get(i).equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
                     advent.getRooms()[index].getItems().add(input);
-                    return "You are carrying: " + carryItemUpdate(modified, -1);
+                    carryItems.remove(modified);
+                    return "You are carrying: " + carryItems;
                 }
             }
+        } else {
+            return "I can't" + input;
         }
+        return null;
     }
 
     //--------------------
