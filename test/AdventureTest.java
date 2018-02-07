@@ -45,18 +45,20 @@ public class AdventureTest {
 
     @Test
     public void getRoomTest() {
-        assertEquals("SiebelEntry", LinkParse.adventure.getRooms()[0].getDirections()[1].getRoom());
+        assertEquals("SiebelEntry", LinkParse.adventure.getRooms()[0].getDirections()[0].getRoom());
     }
 
     @Test
     public void getDirectionsTest() {
         String[] directionsExpected = {"East", "SiebelEntry"};
-        assertArrayEquals(directionsExpected, LinkParse.adventure.getRooms()[0].getDirections());
+        String[] directionActual = {LinkParse.adventure.getRooms()[0].getDirections()[0].getDirectionName(),
+            LinkParse.adventure.getRooms()[0].getDirections()[0].getRoom()};
+        assertArrayEquals(directionsExpected, directionActual);
     }
 
     @Test
     public void getStartingRoomTest() {
-        assertEquals("MatthewStreet", LinkParse.adventure.getStartingRoom());
+        assertEquals("MatthewsStreet", LinkParse.adventure.getStartingRoom());
     }
 
     @Test

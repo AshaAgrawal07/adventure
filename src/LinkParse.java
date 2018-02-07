@@ -1,8 +1,8 @@
 import com.google.gson.Gson;
 import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
+import com.mashape.unirest.http.HttpResponse;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -10,12 +10,13 @@ import java.net.URL;
 public class LinkParse {
     public static Adventure adventure;
     private static final int WILL_WORK = 200;
+
     public static void parse(final String url) {
 
         // Make an HTTP request to the above URL
         try {
             makeApiRequest(url);
-        } catch (UnirestException e) {
+        } catch (com.mashape.unirest.http.exceptions.UnirestException e) {
 //            e.printStackTrace();
             System.out.println("Network not responding");
         } catch (MalformedURLException e) {
@@ -23,7 +24,7 @@ public class LinkParse {
         }
     }
 
-    static void makeApiRequest(String url) throws UnirestException, MalformedURLException {
+    static void makeApiRequest(String url) throws com.mashape.unirest.http.exceptions.UnirestException, MalformedURLException {
         final HttpResponse<String> stringHttpResponse;
 
         // This will throw MalformedURLException if the url is malformed.
@@ -34,7 +35,7 @@ public class LinkParse {
         if (stringHttpResponse.getStatus() == WILL_WORK) {
             String json = stringHttpResponse.getBody();
             Gson gson = new Gson();
-             adventure = gson.fromJson(json, Adventure.class);
+            adventure = gson.fromJson(json, Adventure.class);
         }
     }
 
