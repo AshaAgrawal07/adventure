@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
-public class AdventureTest {
+public class DirectionsTest {
 
     @Before
     public void setUp() throws Exception {
@@ -19,17 +19,12 @@ public class AdventureTest {
     }
 
     @Test
+    public void getDirectionNameTest() {
+        assertEquals("East", LinkParse.adventure.getRooms()[0].getDirections()[0].getDirectionName());
+    }
+
+    @Test
     public void getRoomTest() {
         assertEquals("SiebelEntry", LinkParse.adventure.getRooms()[0].getDirections()[0].getRoom());
-    }
-
-    @Test
-    public void getStartingRoomTest() {
-        assertEquals("MatthewsStreet", LinkParse.adventure.getStartingRoom());
-    }
-
-    @Test
-    public void getEndingRoomTest() {
-        assertEquals("Siebel1314", LinkParse.adventure.getEndingRoom());
     }
 }

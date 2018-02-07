@@ -173,6 +173,16 @@ public class Main {
         return LinkParse.adventure.getRooms()[index].getDescription();
     }
 
+    public static int decideNextFunction(String move) {
+        String modified = move.toLowerCase();
+        if (modified.contains("take ") || modified.contains("drop ")) {
+            return 1;
+        } else if(modified.contains("go ")) {
+            return -1;
+        }
+        return 0;
+    }
+
     //--------------------
     //--------------------
     //--MAIN METHOD HERE--
@@ -181,6 +191,7 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
+       // LinkParse.makeApiRequest("https://courses.engr.illinois.edu/cs126/adventure/siebel.json");
         String currentRoom = advent.getStartingRoom();
 
         String input = scan.nextLine();
@@ -194,13 +205,25 @@ public class Main {
 
             //check for items
             itemCheck(currentRoom);
-            //get what the person wants to do with the items
-            //itemGetLeave(scan.nextLine(), currentRoom);
 
             //get directions for moves
             movesAvailable(currentRoom);
-            //see if move is valid
+
+            //see what the person wants to do: something with items or moving?
             String move = scan.nextLine();
+            int decision = decideNextFunction(move);
+
+            if(decision == 1) {
+                //get what the person wants to do with the items
+                itemGetLeave(move, currentRoom);
+            } else if (decision == -1) {
+                boolean canMove = validMove(move, currentRoom);
+                if(canMove) {
+                    currentRoom = moved(move, currentRoom);
+                }
+            } else {
+                System.out.println("I can't: " + move);
+            }
 
             boolean canMove = validMove(move, currentRoom);
             if(canMove) {
