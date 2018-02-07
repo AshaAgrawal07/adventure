@@ -1,16 +1,18 @@
+import com.mashape.unirest.http.exceptions.UnirestException;
+
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
 
-    private static Adventure advent = LinkParse.adventure;
+    private static Adventure advent;
     private static final int ITEM_SUBSTRING_SHIFT = 5;
     private static final int MOVE_SUBSTRING_SHIFT = 3;
     private static ArrayList<String> carryItems = new ArrayList<>();
 
     /**
-     *
-     * @param check the String that the user inputs
+     * @param check       the String that the user inputs
      * @param currentRoom the room the user is currently in
      * @return whether or not the game continues with a non-exit command
      */
@@ -22,7 +24,6 @@ public class Main {
     }
 
     /**
-     *
      * @param check the room that the user is in
      * @return special messages based on the room
      */
@@ -31,14 +32,12 @@ public class Main {
             return "Your journey begins here";
         } else if (check.equalsIgnoreCase(advent.getEndingRoom())) {
             return "You have reached your final destination";
-        }
-        else {
+        } else {
             return "";
         }
     }
 
     /**
-     *
      * @param currentRoom where the player currently is
      * @return the available valid moves
      */
@@ -49,19 +48,18 @@ public class Main {
         String moveOptions = "";
         int sizeLength = advent.getRooms()[index].getDirections().length;
 
-        if(sizeLength == 1) {
+        if (sizeLength == 1) {
             moveOptions += (advent.getRooms()[index].getDirections()[0].getDirectionName());
         } else {
             for (int i = 0; i < sizeLength - 1; i++) {
                 moveOptions += (advent.getRooms()[index].getDirections()[i].getDirectionName() + ", ");
             }
-            moveOptions += ("or " + advent.getRooms()[index].getDirections()[sizeLength].getDirectionName());
+            moveOptions += ("or " + advent.getRooms()[index].getDirections()[sizeLength - 1].getDirectionName());
         }
         return "From here, you can go: " + moveOptions;
     }
 
     /**
-     *
      * @param currentRoom the room the player is currently in
      * @return the items available in the room
      */
@@ -86,7 +84,6 @@ public class Main {
     }
 
     /**
-     *
      * @param currentRoom the current room the user is in
      * @return the index of the room in the Rooms[]
      */
@@ -95,7 +92,7 @@ public class Main {
 
         //find the index of the corresponding room to the rooms[]
         for (int i = 0; i < advent.getRooms().length; i++) {
-            if(advent.getRooms()[i].getName().equalsIgnoreCase(currentRoom)) {
+            if (advent.getRooms()[i].getName().equalsIgnoreCase(currentRoom)) {
                 index = i;
                 break;
             }
@@ -104,8 +101,7 @@ public class Main {
     }
 
     /**
-     *
-     * @param input the item that the user wants to either drop or carry
+     * @param input       the item that the user wants to either drop or carry
      * @param currentRoom the current room of the user
      * @return a string of the updated items the user is carrying
      */
@@ -113,17 +109,17 @@ public class Main {
         int index = getIndex(currentRoom);
         String modified = input.toLowerCase().substring(ITEM_SUBSTRING_SHIFT);
 
-        if(input.contains("take")) {
-            for(int i = 0; i < advent.getRooms()[index].getItems().size(); i++) {
-                if(advent.getRooms()[index].getItems().get(i).equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
+        if (input.contains("take")) {
+            for (int i = 0; i < advent.getRooms()[index].getItems().size(); i++) {
+                if (advent.getRooms()[index].getItems().get(i).equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
                     advent.getRooms()[index].getItems().remove(i);
                     carryItems.add(modified);
                     return "You are carrying: " + carryItems.toString();
                 }
             }
-        } else if(input.contains("drop")) {
-            for(int i = 0; i < advent.getRooms()[index].getItems().size(); i++) {
-                if(advent.getRooms()[index].getItems().get(i).equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
+        } else if (input.contains("drop")) {
+            for (int i = 0; i < advent.getRooms()[index].getItems().size(); i++) {
+                if (advent.getRooms()[index].getItems().get(i).equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
                     advent.getRooms()[index].getItems().add(input);
                     carryItems.remove(modified);
                     return "You are carrying: " + carryItems.toString();
@@ -137,7 +133,7 @@ public class Main {
 
     public static boolean validMove(String move, String currentRoom) {
         int index = getIndex(currentRoom);
-        for(int i = 0; i < LinkParse.adventure.getRooms()[index].getDirections().length; i++) {
+        for (int i = 0; i < LinkParse.adventure.getRooms()[index].getDirections().length; i++) {
             if (LinkParse.adventure.getRooms()[index].getDirections()[i].getDirectionName().
                     equalsIgnoreCase(move.substring(MOVE_SUBSTRING_SHIFT))) {
                 return true;
@@ -147,14 +143,13 @@ public class Main {
     }
 
     /**
-     *
-     * @param move the place the user wants to move
+     * @param move        the place the user wants to move
      * @param currentRoom the room that the user is currently in
      * @return the new room the user is in
      */
     public static String moved(String move, String currentRoom) {
         int index = getIndex(currentRoom);
-        for(int i = 0; i < LinkParse.adventure.getRooms()[index].getDirections().length; i++) {
+        for (int i = 0; i < LinkParse.adventure.getRooms()[index].getDirections().length; i++) {
             if (LinkParse.adventure.getRooms()[index].getDirections()[i].getDirectionName().
                     equalsIgnoreCase(move.substring(MOVE_SUBSTRING_SHIFT))) {
                 return LinkParse.adventure.getRooms()[index].getDirections()[i].getRoom();
@@ -164,7 +159,6 @@ public class Main {
     }
 
     /**
-     *
      * @param currentRoom the room the user is in currently
      * @return the description of the room
      */
@@ -173,11 +167,16 @@ public class Main {
         return LinkParse.adventure.getRooms()[index].getDescription();
     }
 
+    /**
+     *
+     * @param move will be the order
+     * @return an int: 1 for items and -1 for directions
+     */
     public static int decideNextFunction(String move) {
         String modified = move.toLowerCase();
         if (modified.contains("take ") || modified.contains("drop ")) {
             return 1;
-        } else if(modified.contains("go ")) {
+        } else if (modified.contains("go ")) {
             return -1;
         }
         return 0;
@@ -190,35 +189,47 @@ public class Main {
     //--------------------
 
     public static void main(String[] args) {
+        LinkParse.parse("https://courses.engr.illinois.edu/cs126/adventure/siebel.json");
+        advent = LinkParse.adventure;
         Scanner scan = new Scanner(System.in);
-       // LinkParse.makeApiRequest("https://courses.engr.illinois.edu/cs126/adventure/siebel.json");
+        String url = "https://courses.engr.illinois.edu/cs126/adventure/siebel.json";
+
+        try {
+            LinkParse.makeApiRequest(url);
+        } catch (UnirestException e) {
+//            e.printStackTrace();
+            System.out.println("Network not responding");
+        } catch (MalformedURLException e) {
+            System.out.println("Bad URL: " + url);
+        }
+
         String currentRoom = advent.getStartingRoom();
 
-        String input = scan.nextLine();
-        boolean canGoOn = goOn(input, currentRoom);
+        //String input = scan.nextLine();
+        boolean canGoOn = true;
 
-        advent.getRooms()[0].getDescription();
+        System.out.println(describe(currentRoom));
 
         while (canGoOn) {
             //check if you are in a special room
-            specialRoom(currentRoom);
+            System.out.println(specialRoom(currentRoom));
 
             //check for items
-            itemCheck(currentRoom);
+            System.out.println(itemCheck(currentRoom));
 
             //get directions for moves
-            movesAvailable(currentRoom);
+            System.out.println(movesAvailable(currentRoom));
 
             //see what the person wants to do: something with items or moving?
             String move = scan.nextLine();
             int decision = decideNextFunction(move);
 
-            if(decision == 1) {
+            if (decision == 1) {
                 //get what the person wants to do with the items
-                itemGetLeave(move, currentRoom);
+                System.out.println(itemGetLeave(move, currentRoom));
             } else if (decision == -1) {
                 boolean canMove = validMove(move, currentRoom);
-                if(canMove) {
+                if (canMove) {
                     currentRoom = moved(move, currentRoom);
                 }
             } else {
@@ -226,13 +237,13 @@ public class Main {
             }
 
             boolean canMove = validMove(move, currentRoom);
-            if(canMove) {
+            if (canMove) {
                 currentRoom = moved(move, currentRoom);
             }
 
             //check before the loop iterates again
             canGoOn = goOn(scan.nextLine(), currentRoom);
-            describe(currentRoom);
+            System.out.println(describe(currentRoom));
         }
     }
 }
