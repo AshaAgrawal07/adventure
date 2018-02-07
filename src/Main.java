@@ -5,6 +5,7 @@ public class Main {
 
     private static Adventure advent = LinkParse.adventure;
     private static final int ITEM_SUBSTRING_SHIFT = 5;
+    private static final int MOVE_SUBSTRING_SHIFT = 3;
     private static ArrayList<String> carryItems = new ArrayList<>();
 
     /**
@@ -137,23 +138,36 @@ public class Main {
     public static boolean validMove(String move, String currentRoom) {
         int index = getIndex(currentRoom);
         for(int i = 0; i < LinkParse.adventure.getRooms()[index].getDirections().length; i++) {
-            if (LinkParse.adventure.getRooms()[index].getDirections()[i].getDirectionName().equalsIgnoreCase(move.substring(3))) {
+            if (LinkParse.adventure.getRooms()[index].getDirections()[i].getDirectionName().
+                    equalsIgnoreCase(move.substring(MOVE_SUBSTRING_SHIFT))) {
                 return true;
             }
         }
         return false;
     }
 
+    /**
+     *
+     * @param move the place the user wants to move
+     * @param currentRoom the room that the user is currently in
+     * @return the new room the user is in
+     */
     public static String moved(String move, String currentRoom) {
         int index = getIndex(currentRoom);
         for(int i = 0; i < LinkParse.adventure.getRooms()[index].getDirections().length; i++) {
-            if (LinkParse.adventure.getRooms()[index].getDirections()[i].getDirectionName().equalsIgnoreCase(move.substring(3))) {
+            if (LinkParse.adventure.getRooms()[index].getDirections()[i].getDirectionName().
+                    equalsIgnoreCase(move.substring(MOVE_SUBSTRING_SHIFT))) {
                 return LinkParse.adventure.getRooms()[index].getDirections()[i].getRoom();
             }
         }
         return null;
     }
 
+    /**
+     *
+     * @param currentRoom the room the user is in currently
+     * @return the description of the room
+     */
     public static String describe(String currentRoom) {
         int index = getIndex(currentRoom);
         return LinkParse.adventure.getRooms()[index].getDescription();
