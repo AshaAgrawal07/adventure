@@ -118,13 +118,10 @@ public class Main {
                 }
             }
         } else if (input.contains("drop")) {
-            for (int i = 0; i < advent.getRooms()[index].getItems().size(); i++) {
-                if (advent.getRooms()[index].getItems().get(i).equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
-                    advent.getRooms()[index].getItems().add(input);
-                    carryItems.remove(modified);
-                    return "You are carrying: " + carryItems.toString();
-                }
-            }
+            advent.getRooms()[index].getItems().add(input);
+            carryItems.remove(modified);
+            return "You are carrying: " + carryItems.toString();
+
         } else {
             return "I can't" + input;
         }
@@ -168,7 +165,6 @@ public class Main {
     }
 
     /**
-     *
      * @param move will be the order
      * @return an int: 1 for items and -1 for directions
      */
