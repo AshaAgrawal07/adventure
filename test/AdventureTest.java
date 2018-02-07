@@ -5,6 +5,7 @@ import org.junit.*;
 import org.junit.rules.ExpectedException;
 
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
@@ -101,4 +102,33 @@ public class AdventureTest {
         assertEquals("", Main.specialRoom("ISR"));
     }
 
+    @Test
+    public void getMovesAvailable() {
+        assertEquals("From here, you can go: East", Main.movesAvailable("MatthewsStreet"));
+    }
+
+    @Test
+    public void getItemsTake() {
+        assertEquals("You are carrying: [coin]", Main.itemGetLeave("take coin", "MatthewsStreet"));
+    }
+
+    @Test
+    public void getIsValidMoveTrue() {
+        assertEquals(true, Main.validMove("go east", "MatthewsStreet"));
+    }
+
+    @Test
+    public void getIsValidMoveFalse() {
+        assertEquals(false, Main.validMove("go south", "MatthewsStreet"));
+    }
+
+    @Test
+    public void getMoved() {
+        assertEquals("SiebelEntry", Main.moved("go east", "MatthewsStreet"));
+    }
+
+    @Test
+    public void getDescriptionMain() {
+        assertEquals("You are on Matthews, outside the Siebel Center", Main.describe("MatthewsStreet"));
+    }
 }

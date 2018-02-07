@@ -45,18 +45,18 @@ public class Main {
         int index = getIndex(currentRoom);
 
         //get the directions you can move and append each to the string
-        StringBuilder moveOptions = new StringBuilder();
+        String moveOptions = "";
         int sizeLength = advent.getRooms()[index].getDirections().length;
 
         if(sizeLength == 1) {
-            moveOptions.append(advent.getRooms()[index].getDirections()[0]);
+            moveOptions += (advent.getRooms()[index].getDirections()[0].getDirectionName());
         } else {
             for (int i = 0; i < sizeLength - 1; i++) {
-                moveOptions.append(advent.getRooms()[index].getDirections()[i].getDirectionName() + ", ");
+                moveOptions += (advent.getRooms()[index].getDirections()[i].getDirectionName() + ", ");
             }
-            moveOptions.append("or " + advent.getRooms()[index].getDirections()[sizeLength].getDirectionName());
+            moveOptions += ("or " + advent.getRooms()[index].getDirections()[sizeLength].getDirectionName());
         }
-        return "From here, you can go:" + moveOptions;
+        return "From here, you can go: " + moveOptions;
     }
 
     /**
@@ -81,7 +81,7 @@ public class Main {
             }
             itemsAvailable.append("or " + advent.getRooms()[index].getItems().get(sizeLength - 1));
         }
-        return "This room contains:" + itemsAvailable;
+        return " " + itemsAvailable;
     }
 
     /**
@@ -117,7 +117,7 @@ public class Main {
                 if(advent.getRooms()[index].getItems().get(i).equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
                     advent.getRooms()[index].getItems().remove(i);
                     carryItems.add(modified);
-                    return "You are carrying: " + carryItems;
+                    return "You are carrying: " + carryItems.toString();
                 }
             }
         } else if(input.contains("drop")) {
@@ -125,7 +125,7 @@ public class Main {
                 if(advent.getRooms()[index].getItems().get(i).equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
                     advent.getRooms()[index].getItems().add(input);
                     carryItems.remove(modified);
-                    return "You are carrying: " + carryItems;
+                    return "You are carrying: " + carryItems.toString();
                 }
             }
         } else {
@@ -137,7 +137,7 @@ public class Main {
     public static boolean validMove(String move, String currentRoom) {
         int index = getIndex(currentRoom);
         for(int i = 0; i < LinkParse.adventure.getRooms()[index].getDirections().length; i++) {
-            if (LinkParse.adventure.getRooms()[index].getDirections()[i].getDirectionName().equalsIgnoreCase("move")) {
+            if (LinkParse.adventure.getRooms()[index].getDirections()[i].getDirectionName().equalsIgnoreCase(move.substring(3))) {
                 return true;
             }
         }
@@ -147,7 +147,7 @@ public class Main {
     public static String moved(String move, String currentRoom) {
         int index = getIndex(currentRoom);
         for(int i = 0; i < LinkParse.adventure.getRooms()[index].getDirections().length; i++) {
-            if (LinkParse.adventure.getRooms()[index].getDirections()[i].getDirectionName().equalsIgnoreCase("move")) {
+            if (LinkParse.adventure.getRooms()[index].getDirections()[i].getDirectionName().equalsIgnoreCase(move.substring(3))) {
                 return LinkParse.adventure.getRooms()[index].getDirections()[i].getRoom();
             }
         }
@@ -181,12 +181,13 @@ public class Main {
             //check for items
             itemCheck(currentRoom);
             //get what the person wants to do with the items
-            itemGetLeave(scan.nextLine(), currentRoom);
+            //itemGetLeave(scan.nextLine(), currentRoom);
 
             //get directions for moves
             movesAvailable(currentRoom);
             //see if move is valid
             String move = scan.nextLine();
+
             boolean canMove = validMove(move, currentRoom);
             if(canMove) {
                 currentRoom = moved(move, currentRoom);
