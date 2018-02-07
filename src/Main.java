@@ -10,15 +10,21 @@ public class Main {
     /**
      *
      * @param check the String that the user inputs
+     * @param currentRoom the room the user is currently in
      * @return whether or not the game continues with a non-exit command
      */
-    public static boolean goOn(String check) {
-        if (check.contains("exit") || check.contains("quit")) {
+    public static boolean goOn(String check, String currentRoom) {
+        if (check.contains("exit") || check.contains("quit") || advent.getEndingRoom().equalsIgnoreCase(currentRoom)) {
             return false;
         }
         return true;
     }
 
+    /**
+     *
+     * @param check the room that the user is in
+     * @return special messages based on the room
+     */
     public static String specialRoom(String check) {
         if (check.equalsIgnoreCase(advent.getStartingRoom())) {
             return "Your journey begins here";
@@ -128,6 +134,31 @@ public class Main {
         return null;
     }
 
+    public static boolean validMove(String move, String currentRoom) {
+        int index = getIndex(currentRoom);
+        for(int i = 0; i < LinkParse.adventure.getRooms()[index].getDirections().length; i++) {
+            if (LinkParse.adventure.getRooms()[index].getDirections()[i].getDirectionName().equalsIgnoreCase("move")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String moved(String move, String currentRoom) {
+        int index = getIndex(currentRoom);
+        for(int i = 0; i < LinkParse.adventure.getRooms()[index].getDirections().length; i++) {
+            if (LinkParse.adventure.getRooms()[index].getDirections()[i].getDirectionName().equalsIgnoreCase("move")) {
+                return LinkParse.adventure.getRooms()[index].getDirections()[i].getRoom();
+            }
+        }
+        return null;
+    }
+
+    public static String describe(String currentRoom) {
+        int index = getIndex(currentRoom);
+        return LinkParse.adventure.getRooms()[index].getDescription();
+    }
+
     //--------------------
     //--------------------
     //--MAIN METHOD HERE--
@@ -136,23 +167,34 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
+        String currentRoom = advent.getStartingRoom();
 
         String input = scan.nextLine();
-        boolean canGoOn = goOn(input);
+        boolean canGoOn = goOn(input, currentRoom);
 
-        String currentRoom = advent.getStartingRoom();
         advent.getRooms()[0].getDescription();
 
         while (canGoOn) {
             //check if you are in a special room
             specialRoom(currentRoom);
+
             //check for items
             itemCheck(currentRoom);
-            //get directions
+            //get what the person wants to do with the items
             itemGetLeave(scan.nextLine(), currentRoom);
+
+            //get directions for moves
             movesAvailable(currentRoom);
+            //see if move is valid
+            String move = scan.nextLine();
+            boolean canMove = validMove(move, currentRoom);
+            if(canMove) {
+                currentRoom = moved(move, currentRoom);
+            }
+
             //check before the loop iterates again
-            canGoOn = goOn(scan.nextLine());
+            canGoOn = goOn(scan.nextLine(), currentRoom);
+            describe(currentRoom);
         }
     }
 }

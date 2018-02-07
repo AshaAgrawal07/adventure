@@ -52,7 +52,7 @@ public class AdventureTest {
     public void getDirectionsTest() {
         String[] directionsExpected = {"East", "SiebelEntry"};
         String[] directionActual = {LinkParse.adventure.getRooms()[0].getDirections()[0].getDirectionName(),
-            LinkParse.adventure.getRooms()[0].getDirections()[0].getRoom()};
+                LinkParse.adventure.getRooms()[0].getDirections()[0].getRoom()};
         assertArrayEquals(directionsExpected, directionActual);
     }
 
@@ -64,6 +64,41 @@ public class AdventureTest {
     @Test
     public void getEndingRoomTest() {
         assertEquals("Siebel1314", LinkParse.adventure.getEndingRoom());
+    }
+
+    @Test
+    public void getGoOnExit() {
+        assertEquals(false, Main.goOn("exit", "MatthewsStreet"));
+    }
+
+    @Test
+    public void getGoOnQuit() {
+        assertEquals(false, Main.goOn("quit", "MatthewsStreet"));
+    }
+
+    @Test
+    public void getGoOnFinalRoom() {
+        assertEquals(false, Main.goOn("south", "Siebel1314"));
+    }
+
+    @Test
+    public void getGoesOn() {
+        assertEquals(true, Main.goOn("south", "MatthewsStreet"));
+    }
+
+    @Test
+    public void getSpecialRoomStart() {
+        assertEquals("Your journey begins here", Main.specialRoom("MatthewsStreet"));
+    }
+
+    @Test
+    public void getSpecialRoomEnd() {
+        assertEquals("You have reached your final destination", Main.specialRoom("Siebel1314"));
+    }
+
+    @Test
+    public void getNonSpecialRoom() {
+        assertEquals("", Main.specialRoom("ISR"));
     }
 
 }
