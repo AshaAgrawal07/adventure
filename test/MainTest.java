@@ -40,12 +40,12 @@ public class MainTest {
 
     @Test
     public void getSpecialRoomStart() {
-        assertEquals("Your journey begins here", Game.specialRoom("MatthewsStreet"));
+        assertEquals("Your journey to reclaim your honor begins here", Game.specialRoom("MatthewsStreet"));
     }
 
     @Test
     public void getSpecialRoomEnd() {
-        assertEquals("You have reached your final destination", Game.specialRoom("Siebel1314"));
+        assertEquals("You have reached your final destination and have finally reclaimed your honor", Game.specialRoom("Siebel1314"));
     }
 
     @Test
