@@ -10,6 +10,9 @@ public class Adventure {
     private Rooms[] rooms;
     private String startingRoom;
     private String endingRoom;
+    private Player player;
+
+    public Player getPlayer() { return player; }
 
     public String getStartingRoom() {
         return startingRoom;

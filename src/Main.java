@@ -3,6 +3,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.lang.*;
 
 public class Main {
 
@@ -105,20 +106,21 @@ public class Main {
      * @param currentRoom the current room of the user
      * @return a string of the updated items the user is carrying
      */
-    public static String itemGetLeave(String input, String currentRoom) {
+    public static String itemTakeOrDrop(String input, String currentRoom) {
         int index = getIndex(currentRoom);
         String modified = input.toLowerCase().substring(ITEM_SUBSTRING_SHIFT);
 
         if (input.contains("take")) {
             for (int i = 0; i < advent.getRooms()[index].getItems().size(); i++) {
-                if (advent.getRooms()[index].getItems().get(i).equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
+                if (advent.getRooms()[index].getItems().get(i).getName().equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
                     advent.getRooms()[index].getItems().remove(i);
                     carryItems.add(modified);
                     return "You are carrying: " + carryItems.toString();
                 }
             }
         } else if (input.contains("drop")) {
-            advent.getRooms()[index].getItems().add(input);
+            
+            advent.getRooms()[index].getItems().add(input.substring(ITEM_SUBSTRING_SHIFT));
             carryItems.remove(modified);
             return "You are carrying: " + carryItems.toString();
 
@@ -170,13 +172,16 @@ public class Main {
      */
     public static int decideNextFunction(String move) {
         String modified = move.toLowerCase();
-        if (modified.contains("take ") || modified.contains("drop ")) {
+        if (modified.indexOf("take ") == 0 || modified.indexOf("drop ") == 0) {
             return 1;
-        } else if (modified.contains("go ")) {
+        } else if (modified.indexOf("go ") == 0) {
             return -1;
+        } else if (modified.indexOf("playerinfo") == 0) {
+            return 0;
         }
-        return 0;
+        return 2;
     }
+
 
     //--------------------
     //--------------------
@@ -222,12 +227,14 @@ public class Main {
 
             if (decision == 1) {
                 //get what the person wants to do with the items
-                System.out.println(itemGetLeave(move, currentRoom));
+                System.out.println(itemTakeOrDrop(move, currentRoom));
             } else if (decision == -1) {
                 boolean canMove = validMove(move, currentRoom);
                 if (canMove) {
                     currentRoom = moved(move, currentRoom);
                 }
+            } else if (decision == 0) {
+                System.out.println(displayPlayerInfo());
             } else {
                 System.out.println("I can't: " + move);
             }
@@ -241,5 +248,13 @@ public class Main {
             canGoOn = goOn(scan.nextLine(), currentRoom);
             System.out.println(describe(currentRoom));
         }
+    }
+
+    private static String displayPlayerInfo() {
+        String name = LinkParse.adventure.getPlayer().getName();
+        double attack = LinkParse.adventure.getPlayer().getAttack();
+        double defense = LinkParse.adventure.getPlayer().getDefense();
+        double health = LinkParse.adventure.getPlayer().getHealth();
+        return ("Name: " + name + "\nHealth: " + health + "\nDefense: " + defense + "\nAttack: " + attack);
     }
 }

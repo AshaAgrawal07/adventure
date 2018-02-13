@@ -60,7 +60,7 @@ public class MainTest {
 
     @Test
     public void getItemsTake() {
-        assertEquals("You are carrying: [coin]", Main.itemGetLeave("take coin", "MatthewsStreet"));
+        assertEquals("You are carrying: [coin]", Main.itemTakeOrDrop("take coin", "MatthewsStreet"));
     }
 
     @Test
