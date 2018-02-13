@@ -115,7 +115,7 @@ public class Game {
 
         if (input.contains("take")) {
             for (int i = 0; i < advent.getRooms()[index].getItems().size(); i++) {
-                if (LinkParse.adventure.getRooms()[index].getMonstersInRoom().length != 0) {
+                if (LinkParse.adventure.getRooms()[index].getMonstersInRoom().size() != 0) {
                     return "There still are monsters in the room, you cannot pick up the item";
                 }
                 if (advent.getRooms()[index].getItems().get(i).getName().equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
@@ -209,8 +209,8 @@ public class Game {
     private static String duel(String move, String currentRoom) {
         int index = getIndex(currentRoom);
         int monsterIndex = -1;
-        for (int i = 0; i < LinkParse.adventure.getRooms()[index].getMonstersInRoom().length; i++) {
-            if (LinkParse.adventure.getRooms()[index].getMonstersInRoom()[i]
+        for (int i = 0; i < LinkParse.adventure.getRooms()[index].getMonstersInRoom().size(); i++) {
+            if (LinkParse.adventure.getRooms()[index].getMonstersInRoom().get(i)
                     .equalsIgnoreCase(move.substring(ITEM_SUBSTRING_SHIFT))) {
                 monsterIndex = i;
             }
@@ -224,7 +224,7 @@ public class Game {
 
             for (int i = 0; i < LinkParse.adventure.getMonsters().length; i++) {
                 if (LinkParse.adventure.getMonsters()[i].equals(
-                        LinkParse.adventure.getRooms()[index].getMonstersInRoom()[monsterIndex])) {
+                        LinkParse.adventure.getRooms()[index].getMonstersInRoom().get(monsterIndex))) {
                     indexOfMonsterInArray = i;
                 }
             }
