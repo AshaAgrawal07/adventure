@@ -115,6 +115,9 @@ public class Game {
 
         if (input.contains("take")) {
             for (int i = 0; i < advent.getRooms()[index].getItems().size(); i++) {
+                if (LinkParse.adventure.getRooms()[index].getMonstersInRoom().length != 0) {
+                    return "There still are monsters in the room, you cannot pick up the item";
+                }
                 if (advent.getRooms()[index].getItems().get(i).getName().equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
                     //find damage
                     double damage = advent.getRooms()[index].getItems().get(i).getDamage();
@@ -190,8 +193,10 @@ public class Game {
             return -1;
         } else if (modified.indexOf("playerinfo") == 0) {
             return 0;
+        } else if (modified.indexOf("duel ") == 0) {
+            return 2;
         }
-        return 2;
+        return 3;
     }
 
     private static String displayPlayerInfo() {
@@ -202,9 +207,29 @@ public class Game {
         return ("Name: " + name + "\nHealth: " + health + "\nDefense: " + defense + "\nAttack: " + attack);
     }
 
+    public static String monstersInRoom(String currentRoom) {
+        int index = getIndex(currentRoom);
+        return "Monsters in " + currentRoom + " : " + advent.getRooms()[index].getMonstersInRoom();
+    }
+
+    private static String duel(String move, String currentRoom) {
+        int index = getIndex(currentRoom);
+        int monsterIndex;
+        for (int i = 0; i < LinkParse.adventure.getRooms()[index].getMonstersInRoom().length; i++) {
+            if(LinkParse.adventure.getRooms()[index].getMonstersInRoom()[i]
+                    .equalsIgnoreCase(move.substring(ITEM_SUBSTRING_SHIFT))) {
+                monsterIndex = i;
+            } else {
+                return "I can't duel " + move.substring(ITEM_SUBSTRING_SHIFT);
+            }
+        }
+
+    }
+
     ////////////////////////
     ////MAIN METHOD HERE////
     ////////////////////////
+
 
     public static void main(String[] args) {
         LinkParse.parse("https://courses.engr.illinois.edu/cs126/adventure/siebel.json");
@@ -238,6 +263,9 @@ public class Game {
             //get directions for moves
             System.out.println(movesAvailable(currentRoom));
 
+            //get the monsters present in the room
+            System.out.println(monstersInRoom(currentRoom));
+
             //see what the person wants to do: something with items or moving?
             String move = scan.nextLine();
             int decision = decideNextFunction(move);
@@ -252,7 +280,9 @@ public class Game {
                 }
             } else if (decision == 0) {
                 System.out.println(displayPlayerInfo());
-            } else {
+            } else if (decision == 2){
+                System.out.println(duel(move, currentRoom));
+            }else {
                 System.out.println("I can't: " + move);
             }
 
