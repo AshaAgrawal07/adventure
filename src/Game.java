@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.lang.*;
 
-public class Main {
+public class Game {
 
     private static Adventure advent;
     private static final int ITEM_SUBSTRING_SHIFT = 5;
@@ -33,9 +33,9 @@ public class Main {
      */
     public static String specialRoom(String check) {
         if (check.equalsIgnoreCase(advent.getStartingRoom())) {
-            return "Your journey begins here";
+            return "Your journey to reclaim your honor begins here";
         } else if (check.equalsIgnoreCase(advent.getEndingRoom())) {
-            return "You have reached your final destination";
+            return "You have reached your final destination and have finally reclaimed your honor";
         } else {
             return "";
         }
@@ -202,8 +202,9 @@ public class Main {
         return ("Name: " + name + "\nHealth: " + health + "\nDefense: " + defense + "\nAttack: " + attack);
     }
 
-
-    ////MAIN METHOD HERE
+    ////////////////////////
+    ////MAIN METHOD HERE////
+    ////////////////////////
 
     public static void main(String[] args) {
         LinkParse.parse("https://courses.engr.illinois.edu/cs126/adventure/siebel.json");

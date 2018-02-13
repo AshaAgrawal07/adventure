@@ -11,6 +11,7 @@ public class Adventure {
     private String startingRoom;
     private String endingRoom;
     private Player player;
+    private Monster[] monsters;
 
     public Player getPlayer() { return player; }
 
@@ -25,5 +26,7 @@ public class Adventure {
     public Rooms[] getRooms() {
         return rooms;
     }
+
+    public Monster[] getMonsters() { return monsters; }
 
 }

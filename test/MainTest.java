@@ -20,66 +20,66 @@ public class MainTest {
 
     @Test
     public void getGoOnExit() {
-        assertEquals(false, Main.goOn("exit", "MatthewsStreet"));
+        assertEquals(false, Game.goOn("exit", "MatthewsStreet"));
     }
 
     @Test
     public void getGoOnQuit() {
-        assertEquals(false, Main.goOn("quit", "MatthewsStreet"));
+        assertEquals(false, Game.goOn("quit", "MatthewsStreet"));
     }
 
     @Test
     public void getGoOnFinalRoom() {
-        assertEquals(false, Main.goOn("south", "Siebel1314"));
+        assertEquals(false, Game.goOn("south", "Siebel1314"));
     }
 
     @Test
     public void getGoesOn() {
-        assertEquals(true, Main.goOn("south", "MatthewsStreet"));
+        assertEquals(true, Game.goOn("south", "MatthewsStreet"));
     }
 
     @Test
     public void getSpecialRoomStart() {
-        assertEquals("Your journey begins here", Main.specialRoom("MatthewsStreet"));
+        assertEquals("Your journey begins here", Game.specialRoom("MatthewsStreet"));
     }
 
     @Test
     public void getSpecialRoomEnd() {
-        assertEquals("You have reached your final destination", Main.specialRoom("Siebel1314"));
+        assertEquals("You have reached your final destination", Game.specialRoom("Siebel1314"));
     }
 
     @Test
     public void getNonSpecialRoom() {
-        assertEquals("", Main.specialRoom("ISR"));
+        assertEquals("", Game.specialRoom("ISR"));
     }
 
     @Test
     public void getMovesAvailable() {
-        assertEquals("From here, you can go: East", Main.movesAvailable("MatthewsStreet"));
+        assertEquals("From here, you can go: East", Game.movesAvailable("MatthewsStreet"));
     }
 
     @Test
     public void getItemsTake() {
-        assertEquals("You are carrying: [coin]", Main.itemTakeOrDrop("take coin", "MatthewsStreet"));
+        assertEquals("You are carrying: [coin]", Game.itemTakeOrDrop("take coin", "MatthewsStreet"));
     }
 
     @Test
     public void getIsValidMoveTrue() {
-        assertEquals(true, Main.validMove("go east", "MatthewsStreet"));
+        assertEquals(true, Game.validMove("go east", "MatthewsStreet"));
     }
 
     @Test
     public void getIsValidMoveFalse() {
-        assertEquals(false, Main.validMove("go south", "MatthewsStreet"));
+        assertEquals(false, Game.validMove("go south", "MatthewsStreet"));
     }
 
     @Test
     public void getMoved() {
-        assertEquals("SiebelEntry", Main.moved("go east", "MatthewsStreet"));
+        assertEquals("SiebelEntry", Game.moved("go east", "MatthewsStreet"));
     }
 
     @Test
     public void getDescriptionMain() {
-        assertEquals("You are on Matthews, outside the Siebel Center", Main.describe("MatthewsStreet"));
+        assertEquals("You are on Matthews, outside the Siebel Center", Game.describe("MatthewsStreet"));
     }
 }
