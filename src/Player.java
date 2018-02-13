@@ -8,6 +8,10 @@ public class Player {
     private double attack;
     private int level;
 
+    public void setHealth (double health) {
+        this.health = health;
+    }
+
     public String getName() {
         return name;
     }

@@ -1,8 +1,19 @@
 public class Monster {
     private String name;
-    private Double attack;
-    private Double defense;
-    private Double health;
+    private double attack;
+    private double defense;
+    private double health;
+
+    public Monster (String name, double attack, double defense, double health) {
+        this.name = name;
+        this.attack = attack;
+        this.defense = defense;
+        this.health = health;
+    }
+
+    public void setHealth(double health) {
+        this.health = health;
+    }
 
     public String getName() {
         return name;

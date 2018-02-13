@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,7 +11,7 @@ public class Rooms {
     private ArrayList<Item> items;
     //private HashMap<Integer, Item> items;
     private Directions[] directions;
-    private String[] monstersInRoom;
+    private ArrayList<String> monstersInRoom;
 
     public String getName() {
         return name;
@@ -26,7 +27,7 @@ public class Rooms {
         return directions;
     }
 
-    public String[] getMonstersInRoom () { return monstersInRoom;}
+    public ArrayList<String> getMonstersInRoom () { return monstersInRoom;}
 
     public ArrayList<Item> getItems() {
         return items;
