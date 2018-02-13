@@ -1,7 +1,9 @@
 import com.mashape.unirest.http.exceptions.UnirestException;
 
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.lang.*;
 
@@ -10,7 +12,8 @@ public class Main {
     private static Adventure advent;
     private static final int ITEM_SUBSTRING_SHIFT = 5;
     private static final int MOVE_SUBSTRING_SHIFT = 3;
-    private static ArrayList<String> carryItems = new ArrayList<>();
+    //private static HashMap<Integer, Item> carryItems = new HashMap();
+    private static ArrayList<Item> carryItems= new ArrayList<>();
 
     /**
      * @param check       the String that the user inputs
@@ -113,16 +116,25 @@ public class Main {
         if (input.contains("take")) {
             for (int i = 0; i < advent.getRooms()[index].getItems().size(); i++) {
                 if (advent.getRooms()[index].getItems().get(i).getName().equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
+                    //find damage
+                    double damage = advent.getRooms()[index].getItems().get(i).getDamage();
                     advent.getRooms()[index].getItems().remove(i);
-                    carryItems.add(modified);
+                    Item toTake = new Item (input.substring(ITEM_SUBSTRING_SHIFT), damage);
+                    carryItems.add(toTake);
                     return "You are carrying: " + carryItems.toString();
                 }
             }
         } else if (input.contains("drop")) {
-            
-            advent.getRooms()[index].getItems().add(input.substring(ITEM_SUBSTRING_SHIFT));
-            carryItems.remove(modified);
-            return "You are carrying: " + carryItems.toString();
+            for (int i = 0; i < carryItems.size(); i++) {
+                if (carryItems.get(i).getName().equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
+                    double damage = carryItems.get(i).getDamage();
+                    Item toDrop = new Item (input.substring(ITEM_SUBSTRING_SHIFT), damage);
+                    advent.getRooms()[index].getItems().add(toDrop);
+                    carryItems.remove(toDrop);
+                    return "You are carrying: " + carryItems.toString();
+                }
+            }
+
 
         } else {
             return "I can't" + input;
@@ -182,12 +194,16 @@ public class Main {
         return 2;
     }
 
+    private static String displayPlayerInfo() {
+        String name = LinkParse.adventure.getPlayer().getName();
+        double attack = LinkParse.adventure.getPlayer().getAttack();
+        double defense = LinkParse.adventure.getPlayer().getDefense();
+        double health = LinkParse.adventure.getPlayer().getHealth();
+        return ("Name: " + name + "\nHealth: " + health + "\nDefense: " + defense + "\nAttack: " + attack);
+    }
 
-    //--------------------
-    //--------------------
-    //--MAIN METHOD HERE--
-    //--------------------
-    //--------------------
+
+    ////MAIN METHOD HERE
 
     public static void main(String[] args) {
         LinkParse.parse("https://courses.engr.illinois.edu/cs126/adventure/siebel.json");
@@ -248,13 +264,5 @@ public class Main {
             canGoOn = goOn(scan.nextLine(), currentRoom);
             System.out.println(describe(currentRoom));
         }
-    }
-
-    private static String displayPlayerInfo() {
-        String name = LinkParse.adventure.getPlayer().getName();
-        double attack = LinkParse.adventure.getPlayer().getAttack();
-        double defense = LinkParse.adventure.getPlayer().getDefense();
-        double health = LinkParse.adventure.getPlayer().getHealth();
-        return ("Name: " + name + "\nHealth: " + health + "\nDefense: " + defense + "\nAttack: " + attack);
     }
 }
