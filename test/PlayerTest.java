@@ -22,12 +22,12 @@ public class PlayerTest {
 
     @Test
     public void getAttackTest() {
-        assertEquals(500, adventure.getPlayer().getAttack(), 0);
+        assertEquals(50, adventure.getPlayer().getAttack(), 0);
     }
 
     @Test
     public void getDefenseTest() {
-        assertEquals(500, adventure.getPlayer().getDefense(), 0);
+        assertEquals(50, adventure.getPlayer().getDefense(), 0);
     }
 
     @Test

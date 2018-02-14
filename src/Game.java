@@ -18,8 +18,6 @@ public class Game {
     private static double experienceGained = 0;
 
 
-
-
     /**
      * @param check       the String that the user inputs
      * @param currentRoom the room the user is currently in
@@ -210,7 +208,6 @@ public class Game {
     }
 
     /**
-     *
      * @param currentRoom the room that the user currently is in
      * @return the names of the monsters in the room
      */
@@ -219,7 +216,7 @@ public class Game {
         return "Monsters in " + currentRoom + " : " + advent.getRooms()[index].getMonstersInRoom();
     }
 
-    //***************************************************************add a param that takes in the index of the monster in the room array
+
     public static Object duel(String move, String monsterName, String currentRoom) {
         int index = getIndex(currentRoom);
         int monsterIndex = -1;
@@ -229,6 +226,8 @@ public class Game {
                 monsterIndex = i;
             }
         }
+        System.out.println(advent.getRooms()[index].getName());
+        System.out.println("monsterIndex: " +monsterIndex);
 
         if (monsterIndex == -1) {
             return "I can't duel " + monsterName;
@@ -261,8 +260,8 @@ public class Game {
     public static String status() {
         StringBuilder playerStatus = new StringBuilder();
         playerStatus.append("Player: ");
-        for(int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i+=5) {
-            if(i < advent.getPlayer().getHealth()) {
+        for (int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i += 5) {
+            if (i < advent.getPlayer().getHealth()) {
                 playerStatus.append("#");
             } else {
                 playerStatus.append("_");
@@ -271,8 +270,8 @@ public class Game {
 
         StringBuilder monsterStatus = new StringBuilder();
         monsterStatus.append("Monster: ");
-        for(int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i+=5) {
-            if(i < advent.getPlayer().getHealth()) {
+        for (int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i += 5) {
+            if (i < advent.getPlayer().getHealth()) {
                 monsterStatus.append("#");
             } else {
                 monsterStatus.append("_");
@@ -286,8 +285,8 @@ public class Game {
         int indexOfMonsterInArray = 0;
 
         for (int i = 0; i < advent.getMonsters().length; i++) {
-            if (advent.getMonsters()[i].equals(
-                    advent.getRooms()[index].getMonstersInRoom().get(monsterIndex))) {
+            if (advent.getRooms()[index].getMonstersInRoom().get(monsterIndex)
+                    .equalsIgnoreCase(advent.getMonsters()[i].getName())) {
                 indexOfMonsterInArray = i;
             }
         }
@@ -317,31 +316,36 @@ public class Game {
             fighter.setHealth(fighter.getHealth() - damageOnMonster);
         }
         if (fighter.getHealth() <= 0) {
-            advent.getRooms()[index].getMonstersInRoom().remove(indexOfMonsterInArray);
-            winDuel(monsterInitialHealth, fighter);
+            advent.getRooms()[index].getMonstersInRoom().remove(monsterIndex);
+            System.out.println(winDuel(monsterInitialHealth, fighter));
         } else {
             double damageOnPlayer = fighter.getAttack() - advent.getPlayer().getDefense();
             advent.getPlayer().setHealth(advent.getPlayer().getHealth() - damageOnPlayer);
+            if (advent.getPlayer().getHealth() < 0) {
+                System.out.println("You died.");
+                goOn("exit", currentRoom);
+            }
         }
     }
 
-    private static void winDuel(double monsterInitialHealth, Monster fighter) {
-        advent.getPlayer().setHealth(advent.getPlayer().getHealth()*1.3);
-        advent.getPlayer().setAttack(advent.getPlayer().getAttack()*1.5);
-        advent.getPlayer().setDefense(advent.getPlayer().getDefense()*1.5);
-        experienceGained += ((fighter.getAttack() + fighter.getDefense())/2 + monsterInitialHealth);
+    private static String winDuel(double monsterInitialHealth, Monster fighter) {
+        advent.getPlayer().setHealth(advent.getPlayer().getHealth() * 1.3);
+        advent.getPlayer().setAttack(advent.getPlayer().getAttack() * 1.5);
+        advent.getPlayer().setDefense(advent.getPlayer().getDefense() * 1.5);
+        experienceGained += ((fighter.getAttack() + fighter.getDefense()) / 2 + monsterInitialHealth);
         if (advent.getPlayer().getLevel() < experienceLevel(advent.getPlayer().getLevel())) {
             advent.getPlayer().setLevel((int) experienceLevel(advent.getPlayer().getLevel()));
         }
+        return "Congrats on defeating " + fighter.getName();
     }
 
     private static double experienceLevel(int level) {
-        if ( level == 1) {
+        if (level == 1) {
             return 25;
         } else if (level == 2) {
             return 50;
         } else {
-            return ((experienceLevel(level - 1) + experienceLevel(level - 2))*1.1);
+            return ((experienceLevel(level - 1) + experienceLevel(level - 2)) * 1.1);
         }
     }
 
@@ -414,17 +418,16 @@ public class Game {
                 System.out.println(list());
             } else if (decision == 2 && monstersPresent(currentRoom).contains(move.substring(DUEL_SUBSTRING_SHIFT))) {
                 System.out.println("Duel Begins");
-                String nextMove = scan.nextLine();
+                // String nextMove = scan.nextLine();
                 boolean continueDuel = true;
-                System.out.println(duel(nextMove, move.substring(DUEL_SUBSTRING_SHIFT), currentRoom));
+                //System.out.println(duel(nextMove, move.substring(DUEL_SUBSTRING_SHIFT), currentRoom));
 
                 while (continueDuel) {
-                    String nextMoves = scan.nextLine();
-                    if (nextMove.equalsIgnoreCase("disengage")) {
-                        continueDuel = false;
+                    String nextMove = scan.nextLine();
+                    if (nextMove.equalsIgnoreCase("disengage") || advent.getPlayer().getHealth() < 0) {
                         break;
                     } else {
-                        System.out.println(duel(nextMoves, move, currentRoom));
+                        System.out.println(duel(nextMove, move.substring(DUEL_SUBSTRING_SHIFT), currentRoom));
                     }
                 }
             } else if (decision == -2) {
@@ -435,12 +438,12 @@ public class Game {
 
             //boolean canMove = validMove(move, currentRoom);
             //if (canMove) {
-           //     currentRoom = moved(move, currentRoom);
+            //     currentRoom = moved(move, currentRoom);
             //}
 
             //check before the loop iterates again
-           // canGoOn = goOn(scan.nextLine(), currentRoom);
-           // System.out.println(describe(currentRoom));
+            // canGoOn = goOn(scan.nextLine(), currentRoom);
+            // System.out.println(describe(currentRoom));
         }
     }
 }
