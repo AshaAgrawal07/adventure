@@ -13,7 +13,9 @@ public class Game {
     private static final int MOVE_SUBSTRING_SHIFT = 3;
     private static final int ATTACK_WITH_SUBSTRING_SHIFT = 13;
     private static final int NUMBER_OF_CHARS_IN_STATUS = 20;
+    private static final int DUEL_SUBSTRING_SHIFT = 5;
     private static ArrayList<Item> carryItems = new ArrayList<>();
+    private static double experienceGained = 0;
 
 
 
@@ -152,7 +154,8 @@ public class Game {
         int index = getIndex(currentRoom);
         for (int i = 0; i < advent.getRooms()[index].getDirections().length; i++) {
             if (advent.getRooms()[index].getDirections()[i].getDirectionName().
-                    equalsIgnoreCase(move.substring(MOVE_SUBSTRING_SHIFT))) {
+                    equalsIgnoreCase(move.substring(MOVE_SUBSTRING_SHIFT)) && advent.getRooms()[index]
+                    .getMonstersInRoom().size() == 0) {
                 return true;
             }
         }
@@ -206,42 +209,52 @@ public class Game {
         return 4;
     }
 
+    /**
+     *
+     * @param currentRoom the room that the user currently is in
+     * @return the names of the monsters in the room
+     */
     public static String monstersPresent(String currentRoom) {
         int index = getIndex(currentRoom);
         return "Monsters in " + currentRoom + " : " + advent.getRooms()[index].getMonstersInRoom();
     }
 
-    public static String duel(String move, String currentRoom) {
+    //***************************************************************add a param that takes in the index of the monster in the room array
+    public static Object duel(String move, String monsterName, String currentRoom) {
         int index = getIndex(currentRoom);
         int monsterIndex = -1;
         for (int i = 0; i < advent.getRooms()[index].getMonstersInRoom().size(); i++) {
             if (advent.getRooms()[index].getMonstersInRoom().get(i)
-                    .equalsIgnoreCase(move.substring(ITEM_SUBSTRING_SHIFT))) {
+                    .equalsIgnoreCase(monsterName)) {
                 monsterIndex = i;
             }
+        }
+
+        if (monsterIndex == -1) {
+            return "I can't duel " + monsterName;
         }
 
         if (move.indexOf("attack") == 0) {
             int indexOfMonsterInArray = 0;
             for (int i = 0; i < advent.getMonsters().length; i++) {
                 if (advent.getMonsters()[i].equals(
-                        advent.getRooms()[index].getMonstersInRoom().get(monsterIndex))) {
+                        advent.getRooms()[index].getMonstersInRoom().get(0))) {
                     indexOfMonsterInArray = i;
                 }
             }
             attack(move, currentRoom, monsterIndex, index, advent.getMonsters()[indexOfMonsterInArray].getHealth());
+            return "";
         } else if (move.indexOf("status") == 0) {
-            status();
+            return status();
         } else if (move.indexOf("list") == 0) {
-            list();
+            return list();
         } else if (move.indexOf("playerinfo") == 0) {
-            displayPlayerInfo();
+            return displayPlayerInfo();
         } else if (move.indexOf("exit") == 0 || move.indexOf("quit") == 0) {
-            goOn(move, currentRoom);
+            return goOn(move, currentRoom);
         } else {
-            return "I can't duel " + move.substring(ITEM_SUBSTRING_SHIFT);
+            return "I can't duel " + monsterName;
         }
-        return null;
     }
 
 
@@ -283,6 +296,8 @@ public class Game {
                 advent.getMonsters()[indexOfMonsterInArray].getDefense(),
                 advent.getMonsters()[indexOfMonsterInArray].getHealth());
 
+        System.out.println(fighter.getName());
+
         if (move.contains("with")) {
             if (carryItems.contains(move.substring(ATTACK_WITH_SUBSTRING_SHIFT))) {
 
@@ -314,17 +329,19 @@ public class Game {
         advent.getPlayer().setHealth(advent.getPlayer().getHealth()*1.3);
         advent.getPlayer().setAttack(advent.getPlayer().getAttack()*1.5);
         advent.getPlayer().setDefense(advent.getPlayer().getDefense()*1.5);
-        double experienceGained = ((fighter.getAttack() + fighter.getDefense())/2 + monsterInitialHealth);
-        advent.getPlayer().setLevel(experienceLevel(advent.getPlayer().getLevel()));
+        experienceGained += ((fighter.getAttack() + fighter.getDefense())/2 + monsterInitialHealth);
+        if (advent.getPlayer().getLevel() < experienceLevel(advent.getPlayer().getLevel())) {
+            advent.getPlayer().setLevel((int) experienceLevel(advent.getPlayer().getLevel()));
+        }
     }
 
-    private static int experienceLevel(int level) {
+    private static double experienceLevel(int level) {
         if ( level == 1) {
             return 25;
         } else if (level == 2) {
             return 50;
         } else {
-            return  (int) ((experienceLevel(level - 1) + experienceLevel(level - 2))*1.1);
+            return ((experienceLevel(level - 1) + experienceLevel(level - 2))*1.1);
         }
     }
 
@@ -333,7 +350,8 @@ public class Game {
         double attack = advent.getPlayer().getAttack();
         double defense = advent.getPlayer().getDefense();
         double health = advent.getPlayer().getHealth();
-        return ("Name: " + name + "\nHealth: " + health + "\nDefense: " + defense + "\nAttack: " + attack);
+        ArrayList<Item> items = advent.getPlayer().getItems();
+        return ("Name: " + name + "\nHealth: " + health + "\nDefense: " + defense + "\nAttack: " + attack + "\nItems: " + items);
     }
 
     ////////////////////////
@@ -362,9 +380,9 @@ public class Game {
         //String input = scan.nextLine();
         boolean canGoOn = true;
 
-        System.out.println(describe(currentRoom));
-
         while (canGoOn) {
+            System.out.println(describe(currentRoom));
+
             //check if you are in a special room
             System.out.println(specialRoom(currentRoom));
 
@@ -378,6 +396,7 @@ public class Game {
             System.out.println(monstersPresent(currentRoom));
 
             //see what the person wants to do: something with items or moving?
+            // -1 = go, 0 = playerInfo, 1 = take/drop, -2 = exit/quit, 3 = list, duel = 2
             String move = scan.nextLine();
             int decision = decideNextFunction(move);
 
@@ -393,35 +412,35 @@ public class Game {
                 System.out.println(displayPlayerInfo());
             } else if (decision == 3) {
                 System.out.println(list());
-            } else if (decision == 2) {
-                System.out.println(duel(move, currentRoom));
+            } else if (decision == 2 && monstersPresent(currentRoom).contains(move.substring(DUEL_SUBSTRING_SHIFT))) {
+                System.out.println("Duel Begins");
+                String nextMove = scan.nextLine();
                 boolean continueDuel = true;
+                System.out.println(duel(nextMove, move.substring(DUEL_SUBSTRING_SHIFT), currentRoom));
 
                 while (continueDuel) {
-                    String nextMove = scan.nextLine();
+                    String nextMoves = scan.nextLine();
                     if (nextMove.equalsIgnoreCase("disengage")) {
                         continueDuel = false;
                         break;
                     } else {
-                        System.out.println(duel(nextMove, currentRoom));
+                        System.out.println(duel(nextMoves, move, currentRoom));
                     }
                 }
             } else if (decision == -2) {
-                if ( !(goOn(move, currentRoom))) {
-                    break;
-                }
+                break;
             } else {
                 System.out.println("I can't: " + move);
             }
 
-            boolean canMove = validMove(move, currentRoom);
-            if (canMove) {
-                currentRoom = moved(move, currentRoom);
-            }
+            //boolean canMove = validMove(move, currentRoom);
+            //if (canMove) {
+           //     currentRoom = moved(move, currentRoom);
+            //}
 
             //check before the loop iterates again
-            canGoOn = goOn(scan.nextLine(), currentRoom);
-            System.out.println(describe(currentRoom));
+           // canGoOn = goOn(scan.nextLine(), currentRoom);
+           // System.out.println(describe(currentRoom));
         }
     }
 }
