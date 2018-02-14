@@ -12,24 +12,26 @@ import static org.junit.Assert.*;
 
 public class AdventureTest {
 
+    private static Adventure adventure;
+
     @Before
     public void setUp() throws Exception {
         Gson gson = new Gson();
-        LinkParse.parse("https://courses.engr.illinois.edu/cs126/adventure/siebel.json");
+        adventure = LinkParse.parse("siebel.json");
     }
 
     @Test
     public void getRoomTest() {
-        assertEquals("SiebelEntry", LinkParse.adventure.getRooms()[0].getDirections()[0].getRoom());
+        assertEquals("SiebelEntry", adventure.getRooms()[0].getDirections()[0].getRoom());
     }
 
     @Test
     public void getStartingRoomTest() {
-        assertEquals("MatthewsStreet", LinkParse.adventure.getStartingRoom());
+        assertEquals("MatthewsStreet", adventure.getStartingRoom());
     }
 
     @Test
     public void getEndingRoomTest() {
-        assertEquals("Siebel1314", LinkParse.adventure.getEndingRoom());
+        assertEquals("Siebel1314", adventure.getEndingRoom());
     }
 }

@@ -8,13 +8,15 @@ import java.lang.*;
 
 public class Game {
 
-    private static Adventure advent;
+    private static Adventure advent = LinkParse.parse("siebel.json");
     private static final int ITEM_SUBSTRING_SHIFT = 5;
     private static final int MOVE_SUBSTRING_SHIFT = 3;
     private static final int ATTACK_WITH_SUBSTRING_SHIFT = 13;
     private static final int NUMBER_OF_CHARS_IN_STATUS = 20;
-    //private static HashMap<Integer, Item> carryItems = new HashMap();
     private static ArrayList<Item> carryItems = new ArrayList<>();
+
+
+
 
     /**
      * @param check       the String that the user inputs
@@ -118,9 +120,9 @@ public class Game {
         int index = getIndex(currentRoom);
         String modified = input.toLowerCase().substring(ITEM_SUBSTRING_SHIFT);
 
-        if (input.contains("take")) {
+        if (input.indexOf("take") == 0) {
             for (int i = 0; i < advent.getRooms()[index].getItems().size(); i++) {
-                if (LinkParse.adventure.getRooms()[index].getMonstersInRoom().size() != 0) {
+                if (advent.getRooms()[index].getMonstersInRoom().size() != 0) {
                     return "There still are monsters in the room, you cannot pick up the item";
                 }
                 if (advent.getRooms()[index].getItems().get(i).getName().equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
@@ -131,7 +133,7 @@ public class Game {
                     carryItems.add(toTake);
                 }
             }
-        } else if (input.contains("drop")) {
+        } else if (input.indexOf("drop") == 0) {
             for (int i = 0; i < carryItems.size(); i++) {
                 if (carryItems.get(i).getName().equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
                     double damage = carryItems.get(i).getDamage();
@@ -148,8 +150,8 @@ public class Game {
 
     public static boolean validMove(String move, String currentRoom) {
         int index = getIndex(currentRoom);
-        for (int i = 0; i < LinkParse.adventure.getRooms()[index].getDirections().length; i++) {
-            if (LinkParse.adventure.getRooms()[index].getDirections()[i].getDirectionName().
+        for (int i = 0; i < advent.getRooms()[index].getDirections().length; i++) {
+            if (advent.getRooms()[index].getDirections()[i].getDirectionName().
                     equalsIgnoreCase(move.substring(MOVE_SUBSTRING_SHIFT))) {
                 return true;
             }
@@ -164,10 +166,10 @@ public class Game {
      */
     public static String moved(String move, String currentRoom) {
         int index = getIndex(currentRoom);
-        for (int i = 0; i < LinkParse.adventure.getRooms()[index].getDirections().length; i++) {
-            if (LinkParse.adventure.getRooms()[index].getDirections()[i].getDirectionName().
+        for (int i = 0; i < advent.getRooms()[index].getDirections().length; i++) {
+            if (advent.getRooms()[index].getDirections()[i].getDirectionName().
                     equalsIgnoreCase(move.substring(MOVE_SUBSTRING_SHIFT))) {
-                return LinkParse.adventure.getRooms()[index].getDirections()[i].getRoom();
+                return advent.getRooms()[index].getDirections()[i].getRoom();
             }
         }
         return null;
@@ -179,7 +181,7 @@ public class Game {
      */
     public static String describe(String currentRoom) {
         int index = getIndex(currentRoom);
-        return LinkParse.adventure.getRooms()[index].getDescription();
+        return advent.getRooms()[index].getDescription();
     }
 
     /**
@@ -212,8 +214,8 @@ public class Game {
     public static String duel(String move, String currentRoom) {
         int index = getIndex(currentRoom);
         int monsterIndex = -1;
-        for (int i = 0; i < LinkParse.adventure.getRooms()[index].getMonstersInRoom().size(); i++) {
-            if (LinkParse.adventure.getRooms()[index].getMonstersInRoom().get(i)
+        for (int i = 0; i < advent.getRooms()[index].getMonstersInRoom().size(); i++) {
+            if (advent.getRooms()[index].getMonstersInRoom().get(i)
                     .equalsIgnoreCase(move.substring(ITEM_SUBSTRING_SHIFT))) {
                 monsterIndex = i;
             }
@@ -221,13 +223,13 @@ public class Game {
 
         if (move.indexOf("attack") == 0) {
             int indexOfMonsterInArray = 0;
-            for (int i = 0; i < LinkParse.adventure.getMonsters().length; i++) {
-                if (LinkParse.adventure.getMonsters()[i].equals(
-                        LinkParse.adventure.getRooms()[index].getMonstersInRoom().get(monsterIndex))) {
+            for (int i = 0; i < advent.getMonsters().length; i++) {
+                if (advent.getMonsters()[i].equals(
+                        advent.getRooms()[index].getMonstersInRoom().get(monsterIndex))) {
                     indexOfMonsterInArray = i;
                 }
             }
-            attack(move, currentRoom, monsterIndex, index, LinkParse.adventure.getMonsters()[indexOfMonsterInArray].getHealth());
+            attack(move, currentRoom, monsterIndex, index, advent.getMonsters()[indexOfMonsterInArray].getHealth());
         } else if (move.indexOf("status") == 0) {
             status();
         } else if (move.indexOf("list") == 0) {
@@ -247,7 +249,7 @@ public class Game {
         StringBuilder playerStatus = new StringBuilder();
         playerStatus.append("Player: ");
         for(int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i+=5) {
-            if(i < LinkParse.adventure.getPlayer().getHealth()) {
+            if(i < advent.getPlayer().getHealth()) {
                 playerStatus.append("#");
             } else {
                 playerStatus.append("_");
@@ -257,7 +259,7 @@ public class Game {
         StringBuilder monsterStatus = new StringBuilder();
         monsterStatus.append("Monster: ");
         for(int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i+=5) {
-            if(i < LinkParse.adventure.getPlayer().getHealth()) {
+            if(i < advent.getPlayer().getHealth()) {
                 monsterStatus.append("#");
             } else {
                 monsterStatus.append("_");
@@ -270,16 +272,16 @@ public class Game {
         //find the monster in Monster[]
         int indexOfMonsterInArray = 0;
 
-        for (int i = 0; i < LinkParse.adventure.getMonsters().length; i++) {
-            if (LinkParse.adventure.getMonsters()[i].equals(
-                    LinkParse.adventure.getRooms()[index].getMonstersInRoom().get(monsterIndex))) {
+        for (int i = 0; i < advent.getMonsters().length; i++) {
+            if (advent.getMonsters()[i].equals(
+                    advent.getRooms()[index].getMonstersInRoom().get(monsterIndex))) {
                 indexOfMonsterInArray = i;
             }
         }
-        Monster fighter = new Monster(LinkParse.adventure.getMonsters()[indexOfMonsterInArray].getName(),
-                LinkParse.adventure.getMonsters()[indexOfMonsterInArray].getAttack(),
-                LinkParse.adventure.getMonsters()[indexOfMonsterInArray].getDefense(),
-                LinkParse.adventure.getMonsters()[indexOfMonsterInArray].getHealth());
+        Monster fighter = new Monster(advent.getMonsters()[indexOfMonsterInArray].getName(),
+                advent.getMonsters()[indexOfMonsterInArray].getAttack(),
+                advent.getMonsters()[indexOfMonsterInArray].getDefense(),
+                advent.getMonsters()[indexOfMonsterInArray].getHealth());
 
         if (move.contains("with")) {
             if (carryItems.contains(move.substring(ATTACK_WITH_SUBSTRING_SHIFT))) {
@@ -289,37 +291,48 @@ public class Game {
                         double damage = carryItems.get(i).getDamage();
                         Item attackWith = new Item(move.substring(ATTACK_WITH_SUBSTRING_SHIFT), damage);
 
-                        double damageOnMonster = LinkParse.adventure.getPlayer().getAttack() + attackWith.getDamage()
+                        double damageOnMonster = advent.getPlayer().getAttack() + attackWith.getDamage()
                                 - fighter.getDefense();
                         fighter.setHealth(fighter.getHealth() - damageOnMonster);
                     }
                 }
             }
         } else {
-            double damageOnMonster = LinkParse.adventure.getPlayer().getAttack() - fighter.getDefense();
+            double damageOnMonster = advent.getPlayer().getAttack() - fighter.getDefense();
             fighter.setHealth(fighter.getHealth() - damageOnMonster);
         }
         if (fighter.getHealth() <= 0) {
-            LinkParse.adventure.getRooms()[index].getMonstersInRoom().remove(indexOfMonsterInArray);
+            advent.getRooms()[index].getMonstersInRoom().remove(indexOfMonsterInArray);
             winDuel(monsterInitialHealth, fighter);
         } else {
-            double damageOnPlayer = fighter.getAttack() - LinkParse.adventure.getPlayer().getDefense();
-            LinkParse.adventure.getPlayer().setHealth(LinkParse.adventure.getPlayer().getHealth() - damageOnPlayer);
+            double damageOnPlayer = fighter.getAttack() - advent.getPlayer().getDefense();
+            advent.getPlayer().setHealth(advent.getPlayer().getHealth() - damageOnPlayer);
         }
     }
 
     private static void winDuel(double monsterInitialHealth, Monster fighter) {
-        LinkParse.adventure.getPlayer().setHealth(LinkParse.adventure.getPlayer().getHealth()*1.3);
-        LinkParse.adventure.getPlayer().setAttack(LinkParse.adventure.getPlayer().getAttack()*1.5);
-        LinkParse.adventure.getPlayer().setDefense(LinkParse.adventure.getPlayer().getDefense()*1.5);
+        advent.getPlayer().setHealth(advent.getPlayer().getHealth()*1.3);
+        advent.getPlayer().setAttack(advent.getPlayer().getAttack()*1.5);
+        advent.getPlayer().setDefense(advent.getPlayer().getDefense()*1.5);
         double experienceGained = ((fighter.getAttack() + fighter.getDefense())/2 + monsterInitialHealth);
+        advent.getPlayer().setLevel(experienceLevel(advent.getPlayer().getLevel()));
+    }
+
+    private static int experienceLevel(int level) {
+        if ( level == 1) {
+            return 25;
+        } else if (level == 2) {
+            return 50;
+        } else {
+            return  (int) ((experienceLevel(level - 1) + experienceLevel(level - 2))*1.1);
+        }
     }
 
     private static String displayPlayerInfo() {
-        String name = LinkParse.adventure.getPlayer().getName();
-        double attack = LinkParse.adventure.getPlayer().getAttack();
-        double defense = LinkParse.adventure.getPlayer().getDefense();
-        double health = LinkParse.adventure.getPlayer().getHealth();
+        String name = advent.getPlayer().getName();
+        double attack = advent.getPlayer().getAttack();
+        double defense = advent.getPlayer().getDefense();
+        double health = advent.getPlayer().getHealth();
         return ("Name: " + name + "\nHealth: " + health + "\nDefense: " + defense + "\nAttack: " + attack);
     }
 
@@ -329,21 +342,21 @@ public class Game {
 
 
     public static void main(String[] args) {
-        LinkParse.parse("https://courses.engr.illinois.edu/cs126/adventure/siebel.json");
-        advent = LinkParse.adventure;
-        Scanner scan = new Scanner(System.in);
-        String url = "https://courses.engr.illinois.edu/cs126/adventure/siebel.json";
 
-        try {
+        advent = LinkParse.parse("siebel.json");
+        Scanner scan = new Scanner(System.in);
+        //String url = "https://courses.engr.illinois.edu/cs126/adventure/siebel.json";
+
+        /*try {
             LinkParse.makeApiRequest(url);
         } catch (UnirestException e) {
             e.printStackTrace();
             System.out.println("Network not responding");
         } catch (MalformedURLException e) {
             System.out.println("Bad URL: " + url);
-        }
+        }*/
 
-
+        System.out.println(displayPlayerInfo());
         String currentRoom = advent.getStartingRoom();
 
         //String input = scan.nextLine();
@@ -394,7 +407,9 @@ public class Game {
                     }
                 }
             } else if (decision == -2) {
-                System.out.println(goOn(move, currentRoom));
+                if ( !(goOn(move, currentRoom))) {
+                    break;
+                }
             } else {
                 System.out.println("I can't: " + move);
             }

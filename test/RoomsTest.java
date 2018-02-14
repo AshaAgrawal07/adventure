@@ -12,36 +12,39 @@ import static org.junit.Assert.*;
 
 public class RoomsTest {
 
+    private static Adventure adventure;
+
     @Before
     public void setUp() throws Exception {
         Gson gson = new Gson();
-        LinkParse.parse("https://courses.engr.illinois.edu/cs126/adventure/siebel.json");
+        adventure = LinkParse.parse("siebel.json");
     }
 
 
     @Test
     public void getNameTest() {
-        assertEquals("MatthewsStreet", LinkParse.adventure.getRooms()[0].getName());
+        assertEquals("MatthewsStreet", adventure.getRooms()[0].getName());
     }
 
     @Test
     public void getDescriptionTest() {
         assertEquals("You are on Matthews, outside the Siebel Center",
-                LinkParse.adventure.getRooms()[0].getDescription());
+                adventure.getRooms()[0].getDescription());
     }
 
     @Test
     public void getItemsTest() {
-        ArrayList<String> itemInRoom = new ArrayList<>();
-        itemInRoom.add("coin");
-        assertEquals(itemInRoom, LinkParse.adventure.getRooms()[0].getItems());
+        ArrayList<Item> itemInRoom = new ArrayList<>();
+        Item toAdd = new Item ("coin", 40.3);
+        itemInRoom.add(toAdd);
+        assertEquals(itemInRoom, adventure.getRooms()[0].getItems());
     }
 
     @Test
     public void getDirectionsTest() {
         String[] directionsExpected = {"East", "SiebelEntry"};
-        String[] directionActual = {LinkParse.adventure.getRooms()[0].getDirections()[0].getDirectionName(),
-                LinkParse.adventure.getRooms()[0].getDirections()[0].getRoom()};
+        String[] directionActual = {adventure.getRooms()[0].getDirections()[0].getDirectionName(),
+                adventure.getRooms()[0].getDirections()[0].getRoom()};
         assertArrayEquals(directionsExpected, directionActual);
     }
 }

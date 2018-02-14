@@ -7,20 +7,17 @@ public class Player {
     private double health;
     private double attack;
     private int level;
-    private ArrayList<Double> experience;
 
     public void setHealth (double health) {
         this.health = health;
     }
 
-    public void setExperience (double exp) {
-        experience.add(exp);
-    }
-
-    public ArrayList<Double> getExperience() { return experience; }
-
     public void setDefense(double def) {
         defense = def;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     public void setAttack (double attac) {

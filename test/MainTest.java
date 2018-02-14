@@ -12,10 +12,12 @@ import static org.junit.Assert.*;
 
 public class MainTest {
 
+    private static Adventure adventure;
+
     @Before
     public void setUp() throws Exception {
         Gson gson = new Gson();
-        LinkParse.parse("https://courses.engr.illinois.edu/cs126/adventure/siebel.json");
+        adventure = LinkParse.parse("siebel.json");
     }
 
     @Test
@@ -60,7 +62,8 @@ public class MainTest {
 
     @Test
     public void getItemsTake() {
-        assertEquals("You are carrying: [coin]", Game.itemTakeOrDrop("take coin", "MatthewsStreet"));
+        assertEquals("There still are monsters in the room, you cannot pick up the item",
+                Game.itemTakeOrDrop("take coin", "MatthewsStreet"));
     }
 
     @Test
