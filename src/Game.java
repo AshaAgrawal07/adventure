@@ -242,7 +242,7 @@ public class Game {
             }
             attack(move, currentRoom, monsterIndex, index, advent.getMonsters()[indexOfMonsterInArray].getHealth());
         } else if (move.indexOf("status") == 0) {
-            System.out.println(status());
+            System.out.println(status(monsterIndex, index));
         } else if (move.indexOf("list") == 0) {
             System.out.println(list());
         } else if (move.indexOf("playerinfo") == 0) {
@@ -255,7 +255,7 @@ public class Game {
     }
 
 
-    public static String status() {
+    public static String status(int monsterIndex, int index) {
         String playerStatus = "Player: ";
         for (int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i ++) {
             if (i*5 < advent.getPlayer().getHealth()) {
@@ -264,10 +264,18 @@ public class Game {
                 playerStatus += "-";
             }
         }
+        int indexOfMonsterInArray = 0;
+
+        for (int i = 0; i < advent.getMonsters().length; i++) {
+            if (advent.getRooms()[index].getMonstersInRoom().get(monsterIndex)
+                    .equalsIgnoreCase(advent.getMonsters()[i].getName())) {
+                indexOfMonsterInArray = i;
+            }
+        }
 
         String monsterStatus = "Monster: ";
         for (int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i ++) {
-            if (i*5 < advent.getPlayer().getHealth()) {
+            if (i*5 < advent.getMonsters()[indexOfMonsterInArray].getHealth()) {
                 monsterStatus += "#";
             } else {
                 monsterStatus += "-";
