@@ -257,8 +257,8 @@ public class Game {
 
     public static String status(int monsterIndex, int index) {
         String playerStatus = "Player: ";
-        for (int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i ++) {
-            if (i*5 < advent.getPlayer().getHealth()) {
+        for (int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i++) {
+            if (i * 5 < advent.getPlayer().getHealth()) {
                 playerStatus += "#";
             } else {
                 playerStatus += "-";
@@ -274,14 +274,14 @@ public class Game {
         }
 
         String monsterStatus = "Monster: ";
-        for (int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i ++) {
-            if (i*5 < advent.getMonsters()[indexOfMonsterInArray].getHealth()) {
+        for (int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i++) {
+            if (i * 5 < advent.getMonsters()[indexOfMonsterInArray].getHealth()) {
                 monsterStatus += "#";
             } else {
                 monsterStatus += "-";
             }
         }
-        return playerStatus +  "\n" + monsterStatus;
+        return playerStatus + "\n" + monsterStatus;
     }
 
     public static void attack(String move, String currentRoom, int monsterIndex, int index, double monsterInitialHealth) {
@@ -301,7 +301,6 @@ public class Game {
 
         if (move.contains("with")) {
             if (carryItems.contains(move.substring(ATTACK_WITH_SUBSTRING_SHIFT))) {
-
                 for (int i = 0; i < carryItems.size(); i++) {
                     if (carryItems.get(i).getName().equalsIgnoreCase(move.substring(ATTACK_WITH_SUBSTRING_SHIFT))) {
                         double damage = carryItems.get(i).getDamage();
@@ -310,15 +309,16 @@ public class Game {
                         double damageOnMonster = advent.getPlayer().getAttack() + attackWith.getDamage()
                                 - fighter.getDefense();
                         fighter.setHealth(fighter.getHealth() - damageOnMonster);
-                    } else {
-                        System.out.println("Don't have item");
                     }
                 }
+            } else {
+                System.out.println("Don't have that item");
             }
         } else {
             double damageOnMonster = advent.getPlayer().getAttack() - fighter.getDefense();
             fighter.setHealth(fighter.getHealth() - damageOnMonster);
         }
+
         if (fighter.getHealth() <= 0) {
             advent.getRooms()[index].getMonstersInRoom().remove(monsterIndex);
             System.out.println(winDuel(monsterInitialHealth, fighter));
