@@ -11,7 +11,7 @@ public class Game {
     private static Adventure advent = LinkParse.parse("siebel.json");
     private static final int ITEM_SUBSTRING_SHIFT = 5;
     private static final int MOVE_SUBSTRING_SHIFT = 3;
-    private static final int ATTACK_WITH_SUBSTRING_SHIFT = 13;
+    private static final int ATTACK_WITH_SUBSTRING_SHIFT = 12;
     private static final int NUMBER_OF_CHARS_IN_STATUS = 20;
     private static final int DUEL_SUBSTRING_SHIFT = 5;
     private static ArrayList<Item> carryItems = new ArrayList<>();
@@ -300,14 +300,16 @@ public class Game {
                 advent.getMonsters()[indexOfMonsterInArray].getHealth());
 
         if (move.contains("with")) {
-            if (carryItems.contains(move.substring(ATTACK_WITH_SUBSTRING_SHIFT))) {
+            String item = move.substring(ATTACK_WITH_SUBSTRING_SHIFT);
+            System.out.println(carryItems.size());
+            if (carryItems.contains(item)) {
                 for (int i = 0; i < carryItems.size(); i++) {
-                    if (carryItems.get(i).getName().equalsIgnoreCase(move.substring(ATTACK_WITH_SUBSTRING_SHIFT))) {
+                    if (carryItems.get(i).getName().equalsIgnoreCase(item.trim())) {
                         double damage = carryItems.get(i).getDamage();
-                        Item attackWith = new Item(move.substring(ATTACK_WITH_SUBSTRING_SHIFT), damage);
-
-                        double damageOnMonster = advent.getPlayer().getAttack() + attackWith.getDamage()
-                                - fighter.getDefense();
+                        //Item attackWith = new Item(item, damage);
+                        System.out.println("hi");
+                        double damageOnMonster = advent.getPlayer().getAttack() + damage - fighter.getDefense();
+                        System.out.println(damageOnMonster);
                         fighter.setHealth(fighter.getHealth() - damageOnMonster);
                     }
                 }
@@ -385,6 +387,7 @@ public class Game {
 
         System.out.println(displayPlayerInfo());
         String currentRoom = advent.getStartingRoom();
+        carryItems = advent.getPlayer().getItems();
 
         //String input = scan.nextLine();
         boolean canGoOn = true;
