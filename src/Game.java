@@ -16,6 +16,7 @@ public class Game {
     private static final int DUEL_SUBSTRING_SHIFT = 5;
     private static ArrayList<Item> carryItems = new ArrayList<>();
     private static double experienceGained = 0;
+    private static boolean continueDuel;
 
 
     /**
@@ -217,7 +218,7 @@ public class Game {
     }
 
 
-    public static Object duel(String move, String monsterName, String currentRoom) {
+    public static void duel(String move, String monsterName, String currentRoom) {
         int index = getIndex(currentRoom);
         int monsterIndex = -1;
         for (int i = 0; i < advent.getRooms()[index].getMonstersInRoom().size(); i++) {
@@ -226,11 +227,9 @@ public class Game {
                 monsterIndex = i;
             }
         }
-        System.out.println(advent.getRooms()[index].getName());
-        System.out.println("monsterIndex: " +monsterIndex);
 
         if (monsterIndex == -1) {
-            return "I can't duel " + monsterName;
+            System.out.println("I can't duel " + monsterName);
         }
 
         if (move.indexOf("attack") == 0) {
@@ -242,42 +241,39 @@ public class Game {
                 }
             }
             attack(move, currentRoom, monsterIndex, index, advent.getMonsters()[indexOfMonsterInArray].getHealth());
-            return "";
         } else if (move.indexOf("status") == 0) {
-            return status();
+            System.out.println(status());
         } else if (move.indexOf("list") == 0) {
-            return list();
+            System.out.println(list());
         } else if (move.indexOf("playerinfo") == 0) {
-            return displayPlayerInfo();
+            System.out.println(displayPlayerInfo());
         } else if (move.indexOf("exit") == 0 || move.indexOf("quit") == 0) {
-            return goOn(move, currentRoom);
+            System.out.println(goOn(move, currentRoom));
         } else {
-            return "I can't duel " + monsterName;
+            System.out.println("I can't duel " + monsterName);
         }
     }
 
 
     public static String status() {
-        StringBuilder playerStatus = new StringBuilder();
-        playerStatus.append("Player: ");
-        for (int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i += 5) {
-            if (i < advent.getPlayer().getHealth()) {
-                playerStatus.append("#");
+        String playerStatus = "Player: ";
+        for (int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i ++) {
+            if (i*5 < advent.getPlayer().getHealth()) {
+                playerStatus += "#";
             } else {
-                playerStatus.append("_");
+                playerStatus += "-";
             }
         }
 
-        StringBuilder monsterStatus = new StringBuilder();
-        monsterStatus.append("Monster: ");
-        for (int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i += 5) {
-            if (i < advent.getPlayer().getHealth()) {
-                monsterStatus.append("#");
+        String monsterStatus = "Monster: ";
+        for (int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i ++) {
+            if (i*5 < advent.getPlayer().getHealth()) {
+                monsterStatus += "#";
             } else {
-                monsterStatus.append("_");
+                monsterStatus += "-";
             }
         }
-        return null;
+        return playerStatus +  "\n" + monsterStatus;
     }
 
     public static void attack(String move, String currentRoom, int monsterIndex, int index, double monsterInitialHealth) {
@@ -295,8 +291,6 @@ public class Game {
                 advent.getMonsters()[indexOfMonsterInArray].getDefense(),
                 advent.getMonsters()[indexOfMonsterInArray].getHealth());
 
-        System.out.println(fighter.getName());
-
         if (move.contains("with")) {
             if (carryItems.contains(move.substring(ATTACK_WITH_SUBSTRING_SHIFT))) {
 
@@ -308,6 +302,8 @@ public class Game {
                         double damageOnMonster = advent.getPlayer().getAttack() + attackWith.getDamage()
                                 - fighter.getDefense();
                         fighter.setHealth(fighter.getHealth() - damageOnMonster);
+                    } else {
+                        System.out.println("Don't have item");
                     }
                 }
             }
@@ -336,6 +332,7 @@ public class Game {
         if (advent.getPlayer().getLevel() < experienceLevel(advent.getPlayer().getLevel())) {
             advent.getPlayer().setLevel((int) experienceLevel(advent.getPlayer().getLevel()));
         }
+        continueDuel = false;
         return "Congrats on defeating " + fighter.getName();
     }
 
@@ -419,7 +416,7 @@ public class Game {
             } else if (decision == 2 && monstersPresent(currentRoom).contains(move.substring(DUEL_SUBSTRING_SHIFT))) {
                 System.out.println("Duel Begins");
                 // String nextMove = scan.nextLine();
-                boolean continueDuel = true;
+                continueDuel = true;
                 //System.out.println(duel(nextMove, move.substring(DUEL_SUBSTRING_SHIFT), currentRoom));
 
                 while (continueDuel) {
@@ -427,7 +424,7 @@ public class Game {
                     if (nextMove.equalsIgnoreCase("disengage") || advent.getPlayer().getHealth() < 0) {
                         break;
                     } else {
-                        System.out.println(duel(nextMove, move.substring(DUEL_SUBSTRING_SHIFT), currentRoom));
+                        duel(nextMove, move.substring(DUEL_SUBSTRING_SHIFT), currentRoom);
                     }
                 }
             } else if (decision == -2) {
