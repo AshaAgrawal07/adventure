@@ -12,8 +12,9 @@ public class Game {
     private static final int ITEM_SUBSTRING_SHIFT = 5;
     private static final int MOVE_SUBSTRING_SHIFT = 3;
     private static final int ATTACK_WITH_SUBSTRING_SHIFT = 13;
+    private static final int NUMBER_OF_CHARS_IN_STATUS = 20;
     //private static HashMap<Integer, Item> carryItems = new HashMap();
-    private static ArrayList<Item> carryItems= new ArrayList<>();
+    private static ArrayList<Item> carryItems = new ArrayList<>();
 
     /**
      * @param check       the String that the user inputs
@@ -104,6 +105,10 @@ public class Game {
         return index;
     }
 
+    public static String list() {
+        return "You are carrying: " + carryItems.toString();
+    }
+
     /**
      * @param input       the item that the user wants to either drop or carry
      * @param currentRoom the current room of the user
@@ -122,23 +127,19 @@ public class Game {
                     //find damage
                     double damage = advent.getRooms()[index].getItems().get(i).getDamage();
                     advent.getRooms()[index].getItems().remove(i);
-                    Item toTake = new Item (input.substring(ITEM_SUBSTRING_SHIFT), damage);
+                    Item toTake = new Item(input.substring(ITEM_SUBSTRING_SHIFT), damage);
                     carryItems.add(toTake);
-                    return "You are carrying: " + carryItems.toString();
                 }
             }
         } else if (input.contains("drop")) {
             for (int i = 0; i < carryItems.size(); i++) {
                 if (carryItems.get(i).getName().equalsIgnoreCase(input.substring(ITEM_SUBSTRING_SHIFT))) {
                     double damage = carryItems.get(i).getDamage();
-                    Item toDrop = new Item (input.substring(ITEM_SUBSTRING_SHIFT), damage);
+                    Item toDrop = new Item(input.substring(ITEM_SUBSTRING_SHIFT), damage);
                     advent.getRooms()[index].getItems().add(toDrop);
                     carryItems.remove(toDrop);
-                    return "You are carrying: " + carryItems.toString();
                 }
             }
-
-
         } else {
             return "I can't" + input;
         }
@@ -197,16 +198,18 @@ public class Game {
             return 2;
         } else if (modified.indexOf("quit") == 0 || modified.indexOf("exit") == 0) {
             return -2;
+        } else if (modified.indexOf("list") == 0) {
+            return 3;
         }
-        return 3;
+        return 4;
     }
 
-    public static String monstersInRoom(String currentRoom) {
+    public static String monstersPresent(String currentRoom) {
         int index = getIndex(currentRoom);
         return "Monsters in " + currentRoom + " : " + advent.getRooms()[index].getMonstersInRoom();
     }
 
-    private static String duel(String move, String currentRoom) {
+    public static String duel(String move, String currentRoom) {
         int index = getIndex(currentRoom);
         int monsterIndex = -1;
         for (int i = 0; i < LinkParse.adventure.getRooms()[index].getMonstersInRoom().size(); i++) {
@@ -215,50 +218,86 @@ public class Game {
                 monsterIndex = i;
             }
         }
-        if (monsterIndex == -1) {
+
+        if (move.indexOf("attack") == 0) {
+            attack(move, currentRoom, monsterIndex, index);
+        } else if (move.indexOf("status") == 0) {
+            status();
+        } else if (move.indexOf("list") == 0) {
+            list();
+        } else if (move.indexOf("playerinfo") == 0) {
+            displayPlayerInfo();
+        } else if (move.indexOf("exit") == 0 || move.indexOf("quit") == 0) {
+            goOn(move, currentRoom);
+        } else {
             return "I can't duel " + move.substring(ITEM_SUBSTRING_SHIFT);
-        } else if (move.indexOf("attack") == 0) {
+        }
+        return null;
+    }
 
-            //find the monster in Monster[]
-            int indexOfMonsterInArray = 0;
 
-            for (int i = 0; i < LinkParse.adventure.getMonsters().length; i++) {
-                if (LinkParse.adventure.getMonsters()[i].equals(
-                        LinkParse.adventure.getRooms()[index].getMonstersInRoom().get(monsterIndex))) {
-                    indexOfMonsterInArray = i;
-                }
+    public static String status() {
+        StringBuilder playerStatus = new StringBuilder();
+        playerStatus.append("Player: ");
+        for(int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i+=5) {
+            if(i < LinkParse.adventure.getPlayer().getHealth()) {
+                playerStatus.append("#");
+            } else {
+                playerStatus.append("_");
             }
-            Monster fighter = new Monster(LinkParse.adventure.getMonsters()[indexOfMonsterInArray].getName(),
-                    LinkParse.adventure.getMonsters()[indexOfMonsterInArray].getAttack(),
-                    LinkParse.adventure.getMonsters()[indexOfMonsterInArray].getDefense(),
-                    LinkParse.adventure.getMonsters()[indexOfMonsterInArray].getHealth());
+        }
 
-            if (move.contains("with")) {
-                if (carryItems.contains(move.substring(ATTACK_WITH_SUBSTRING_SHIFT))) {
-
-                    for (int i = 0; i < carryItems.size(); i++) {
-                        if (carryItems.get(i).getName().equalsIgnoreCase(move.substring(ATTACK_WITH_SUBSTRING_SHIFT))) {
-                            double damage = carryItems.get(i).getDamage();
-                            Item attackWith = new Item(move.substring(ATTACK_WITH_SUBSTRING_SHIFT), damage);
-
-                            double damageOnMonster = LinkParse.adventure.getPlayer().getAttack() + attackWith.getDamage()
-                                    - fighter.getDefense();
-                            fighter.setHealth(fighter.getHealth() - damageOnMonster);
-                        }
-                    }
-                } else {
-                    double damageOnMonster = LinkParse.adventure.getPlayer().getAttack() - fighter.getDefense();
-                    fighter.setHealth(fighter.getHealth() - damageOnMonster);
-                }
-                if (fighter.getHealth() <= 0) {
-                    LinkParse.adventure.getRooms()[index].getMonstersInRoom().remove(indexOfMonsterInArray);
-                } else {
-                    double damageOnPlayer = fighter.getAttack() - LinkParse.adventure.getPlayer().getDefense();
-                    LinkParse.adventure.getPlayer().setHealth(LinkParse.adventure.getPlayer().getHealth() - damageOnPlayer);
-                }
+        StringBuilder monsterStatus = new StringBuilder();
+        monsterStatus.append("Monster: ");
+        for(int i = 0; i < NUMBER_OF_CHARS_IN_STATUS; i+=5) {
+            if(i < LinkParse.adventure.getPlayer().getHealth()) {
+                monsterStatus.append("#");
+            } else {
+                monsterStatus.append("_");
             }
         }
         return null;
+    }
+
+    public static void attack(String move, String currentRoom, int monsterIndex, int index) {
+        //find the monster in Monster[]
+        int indexOfMonsterInArray = 0;
+
+        for (int i = 0; i < LinkParse.adventure.getMonsters().length; i++) {
+            if (LinkParse.adventure.getMonsters()[i].equals(
+                    LinkParse.adventure.getRooms()[index].getMonstersInRoom().get(monsterIndex))) {
+                indexOfMonsterInArray = i;
+            }
+        }
+        Monster fighter = new Monster(LinkParse.adventure.getMonsters()[indexOfMonsterInArray].getName(),
+                LinkParse.adventure.getMonsters()[indexOfMonsterInArray].getAttack(),
+                LinkParse.adventure.getMonsters()[indexOfMonsterInArray].getDefense(),
+                LinkParse.adventure.getMonsters()[indexOfMonsterInArray].getHealth());
+
+        if (move.contains("with")) {
+            if (carryItems.contains(move.substring(ATTACK_WITH_SUBSTRING_SHIFT))) {
+
+                for (int i = 0; i < carryItems.size(); i++) {
+                    if (carryItems.get(i).getName().equalsIgnoreCase(move.substring(ATTACK_WITH_SUBSTRING_SHIFT))) {
+                        double damage = carryItems.get(i).getDamage();
+                        Item attackWith = new Item(move.substring(ATTACK_WITH_SUBSTRING_SHIFT), damage);
+
+                        double damageOnMonster = LinkParse.adventure.getPlayer().getAttack() + attackWith.getDamage()
+                                - fighter.getDefense();
+                        fighter.setHealth(fighter.getHealth() - damageOnMonster);
+                    }
+                }
+            }
+        } else {
+            double damageOnMonster = LinkParse.adventure.getPlayer().getAttack() - fighter.getDefense();
+            fighter.setHealth(fighter.getHealth() - damageOnMonster);
+        }
+        if (fighter.getHealth() <= 0) {
+            LinkParse.adventure.getRooms()[index].getMonstersInRoom().remove(indexOfMonsterInArray);
+        } else {
+            double damageOnPlayer = fighter.getAttack() - LinkParse.adventure.getPlayer().getDefense();
+            LinkParse.adventure.getPlayer().setHealth(LinkParse.adventure.getPlayer().getHealth() - damageOnPlayer);
+        }
     }
 
     private static String displayPlayerInfo() {
@@ -290,7 +329,6 @@ public class Game {
         }
 
 
-
         String currentRoom = advent.getStartingRoom();
 
         //String input = scan.nextLine();
@@ -309,7 +347,7 @@ public class Game {
             System.out.println(movesAvailable(currentRoom));
 
             //get the monsters present in the room
-            System.out.println(monstersInRoom(currentRoom));
+            System.out.println(monstersPresent(currentRoom));
 
             //see what the person wants to do: something with items or moving?
             String move = scan.nextLine();
@@ -325,18 +363,19 @@ public class Game {
                 }
             } else if (decision == 0) {
                 System.out.println(displayPlayerInfo());
-            } else if (decision == 2){
+            } else if (decision == 3) {
+                System.out.println(list());
+            } else if (decision == 2) {
                 System.out.println(duel(move, currentRoom));
                 boolean continueDuel = true;
 
                 while (continueDuel) {
                     String nextMove = scan.nextLine();
-                    if(nextMove.equalsIgnoreCase("disengage"))
-                    {
+                    if (nextMove.equalsIgnoreCase("disengage")) {
                         continueDuel = false;
                         break;
                     } else {
-                        duel(nextMove, currentRoom);
+                        System.out.println(duel(nextMove, currentRoom));
                     }
                 }
             } else if (decision == -2) {

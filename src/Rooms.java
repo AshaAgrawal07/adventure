@@ -33,7 +33,7 @@ public class Rooms {
         return items;
     }
 
-    @Override
+    /*@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Rooms)) return false;
@@ -43,7 +43,7 @@ public class Rooms {
                 Objects.equals(getItems(), rooms.getItems()) &&
                 Arrays.equals(getDirections(), rooms.getDirections()) &&
                 Arrays.equals(getMonstersInRoom(), rooms.getMonstersInRoom());
-    }
+    }*/
 
     /*@Override
     public int hashCode() {
