@@ -220,7 +220,14 @@ public class Game {
         }
 
         if (move.indexOf("attack") == 0) {
-            attack(move, currentRoom, monsterIndex, index);
+            int indexOfMonsterInArray = 0;
+            for (int i = 0; i < LinkParse.adventure.getMonsters().length; i++) {
+                if (LinkParse.adventure.getMonsters()[i].equals(
+                        LinkParse.adventure.getRooms()[index].getMonstersInRoom().get(monsterIndex))) {
+                    indexOfMonsterInArray = i;
+                }
+            }
+            attack(move, currentRoom, monsterIndex, index, LinkParse.adventure.getMonsters()[indexOfMonsterInArray].getHealth());
         } else if (move.indexOf("status") == 0) {
             status();
         } else if (move.indexOf("list") == 0) {
@@ -259,7 +266,7 @@ public class Game {
         return null;
     }
 
-    public static void attack(String move, String currentRoom, int monsterIndex, int index) {
+    public static void attack(String move, String currentRoom, int monsterIndex, int index, double monsterInitialHealth) {
         //find the monster in Monster[]
         int indexOfMonsterInArray = 0;
 
@@ -294,10 +301,18 @@ public class Game {
         }
         if (fighter.getHealth() <= 0) {
             LinkParse.adventure.getRooms()[index].getMonstersInRoom().remove(indexOfMonsterInArray);
+            winDuel(monsterInitialHealth, fighter);
         } else {
             double damageOnPlayer = fighter.getAttack() - LinkParse.adventure.getPlayer().getDefense();
             LinkParse.adventure.getPlayer().setHealth(LinkParse.adventure.getPlayer().getHealth() - damageOnPlayer);
         }
+    }
+
+    private static void winDuel(double monsterInitialHealth, Monster fighter) {
+        LinkParse.adventure.getPlayer().setHealth(LinkParse.adventure.getPlayer().getHealth()*1.3);
+        LinkParse.adventure.getPlayer().setAttack(LinkParse.adventure.getPlayer().getAttack()*1.5);
+        LinkParse.adventure.getPlayer().setDefense(LinkParse.adventure.getPlayer().getDefense()*1.5);
+        double experienceGained = ((fighter.getAttack() + fighter.getDefense())/2 + monsterInitialHealth);
     }
 
     private static String displayPlayerInfo() {

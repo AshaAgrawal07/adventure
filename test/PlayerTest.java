@@ -34,7 +34,7 @@ public class PlayerTest {
 
     @Test
     public void getLevelTest() {
-        assertEquals(0, LinkParse.adventure.getPlayer().getLevel(), 0);
+        assertEquals(1, LinkParse.adventure.getPlayer().getLevel(), 0);
     }
 
     @Test
